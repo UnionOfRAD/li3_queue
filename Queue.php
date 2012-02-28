@@ -48,18 +48,6 @@ class Queue extends \lithium\core\Adaptable {
 		return $config;
 	}
 
-	public static function run(array $options = array()) {
-		$defaults = array('config' => 'default');
-		$options += $defaults;
-		$params   = compact('options');
-
-		return static::_filter(__FUNCTION__, $params, function($self, $params) {
-			$options = $params['options'];
-
-			return $self::adapter($options['config'])->run($options);
-		});
-	}
-
 	public static function reset(array $options = array()) {
 		$defaults = array('config' => 'default');
 		$options += $defaults;
@@ -69,6 +57,22 @@ class Queue extends \lithium\core\Adaptable {
 			$options = $params['options'];
 
 			return $self::adapter($options['config'])->reset($options);
+		});
+	}
+
+	/**
+	 * @param array $options
+	 * @return mixed Returned value by adapter's run method
+	 */
+	public static function run(array $options = array()) {
+		$defaults = array('config' => 'default');
+		$options += $defaults;
+		$params   = compact('options');
+
+		return static::_filter(__FUNCTION__, $params, function($self, $params) {
+			$options = $params['options'];
+
+			return $self::adapter($options['config'])->run($options);
 		});
 	}
 }
