@@ -34,6 +34,16 @@ class QueueTest extends \lithium\test\Unit {
 		$this->assertEqual($expected, $result);
 	}
 
+	public function testLoadingAdapters() {
+		Queue::config(array('default' => array(
+			'adapter' => 'Gearman'
+		)));
+
+		$expected = 'li3_queue\extensions\adapter\queue\Gearman';
+		$result = Queue::adapter('default');
+		$this->assertEqual($expected, get_class($result));
+	}
+
 	public function testAddWithNoConfiguration() {
 		$this->expectException('/has not been defined/');
 		$this->assertFalse(Queue::add('test', array('config' => 'no-config')));
