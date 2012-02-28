@@ -42,8 +42,6 @@ class Queue extends \lithium\core\Adaptable {
 			throw new ConfigException("Configuration {$config} has not been defined.");
 		} elseif (!is_array($config)) {
 			throw new ConfigException('Invalid configuration: not an array');
-		} elseif (empty($config['servers'])) {
-			throw new ConfigException('No servers defined. Add them to the "servers" setting');
 		}
 		return $config;
 	}
