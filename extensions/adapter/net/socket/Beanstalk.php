@@ -30,6 +30,8 @@ class Beanstalk extends \lithium\net\socket\Stream {
 	const DEFAULT_HOST = '127.0.0.1';
 	const DEFAULT_PORT = 11300;
 
+	protected $_errors = array();
+
 	/**
 	 * Reads data from the curl connection.
 	 * The `read` method will utilize the curl options that have been set.
@@ -89,13 +91,13 @@ class Beanstalk extends \lithium\net\socket\Stream {
 	 *                     		The most urgent priority is 0; the least urgent priority is 4294967295.
 	 * @param integer $delay 	Seconds to wait before putting the job in the ready queue.
 	 *                       	The job will be in the "delayed" state during this time.
-	 * @param integer $timeout 	Time to run - Number of seconds to allow a worker to run this job.
+	 * @param integer $ttr 		Time to run - Number of seconds to allow a worker to run this job.
 	 *                     		The minimum ttr is 1.
 	 * @param string $data The job body
 	 * @return integer|boolean False on error otherwise and integer indicating the job id
 	 */
-	public function put($priority, $delay, $timeout, string $data) {
-		$this->write(sprintf('put %d %d %d %d', $priority, $delay, $timeout, strlen($data)));
+	public function put($priority, $delay, $ttr, string $data) {
+		$this->write(sprintf('put %d %d %d %d', $priority, $delay, $ttr, strlen($data)));
 		$this->write($data);
 		$status = strtok($this->read(), ' ');
 

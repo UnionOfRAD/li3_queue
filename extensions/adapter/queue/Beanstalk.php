@@ -71,7 +71,6 @@ class Beanstalk extends \li3_queue\storage\Queue {
 				$this->_isConnected = true;
 			}
 		} catch (Exception $e) {
-			dd($e->getMessage());
 			throw new NetworkException("Could not connect to Beanstalk.", 503, $e);
 		}
 
@@ -124,15 +123,24 @@ class Beanstalk extends \li3_queue\storage\Queue {
 	/* Queue Protocol */
 
 	public function add($task, array $options = array()) {
-		return true;
+		return $this->put($task, $options);
 	}
 
 	public function reset(array $options = array()) {
+		$defaults = array(
+			'timeout' => 0,
+			'tube' => 'default'
+		);
+		$options += $defaults;
+
+		while($job = $this->reserve($options)) {
+			$this->delete($job['id']);
+		}
 		return true;
 	}
 
 	public function run(array $options = array()) {
-		return true;
+		return $this->reserve($options);
 	}
 
 	/* Beanstalk Commands */
@@ -148,7 +156,7 @@ class Beanstalk extends \li3_queue\storage\Queue {
 		extract($options, EXTR_OVERWRITE);
 
 		return $this->choose($options['tube'])
-			&& $this->connection->put($priority, $delay, $timeout, $this->_encode($body));
+			&& $this->connection->put($priority, $delay, $timeout, $this->_encode($data));
 	}
 
 	public function choose($tube) {
@@ -169,12 +177,12 @@ class Beanstalk extends \li3_queue\storage\Queue {
 		if($tube && !$this->watch($tube)) {
 			return false;
 		}
-		$reserve = $this->connection->reserve($timeout);
-		if(!$reserve) {
+		$result = $this->connection->reserve($timeout);
+		if(!$result) {
 			return false;
 		}
 
-		return array_merge($this->_decode($result['body']), array('id' => $result['id']));
+		return array_merge((array)$this->_decode($result['body']), array('id' => $result['id']));
 	}
 
 	/**
@@ -183,7 +191,7 @@ class Beanstalk extends \li3_queue\storage\Queue {
 	 */
 	public function watch($tubes) {
 		foreach((array)$tubes as $tube) {
-			if (!$this->connection->watch($ttube)) {
+			if (!$this->connection->watch($tube)) {
 				return false;
 			}
 		}
@@ -207,6 +215,15 @@ class Beanstalk extends \li3_queue\storage\Queue {
 		extract($options, EXTR_OVERWRITE);
 
 		return $this->connection->release($id, $priority, $delay);
+	}
+
+	/**
+	 * Deletes a job
+	 *
+	 * @param mixed $id
+	 */
+	function delete($id) {
+		return $this->connection->delete($id);
 	}
 
 	/**
