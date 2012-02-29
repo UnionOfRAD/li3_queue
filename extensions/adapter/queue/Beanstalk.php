@@ -155,8 +155,11 @@ class Beanstalk extends \li3_queue\storage\Queue {
 		$options += $defaults;
 		extract($options, EXTR_OVERWRITE);
 
-		return $this->choose($options['tube'])
-			&& $this->connection->put($priority, $delay, $timeout, $this->_encode($data));
+		if($tube && !$this->watch($tube)) {
+			return false;
+		}
+
+		return $this->connection->put($priority, $delay, $timeout, $this->_encode($data));
 	}
 
 	public function choose($tube) {
