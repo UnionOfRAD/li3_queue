@@ -2,7 +2,7 @@
 
 namespace li3_queue\tests\cases;
 
-use li3_queue\Queue;
+use li3_queue\storage\Queue;
 
 class QueueTest extends \lithium\test\Unit {
 	protected $_configurations = null;
