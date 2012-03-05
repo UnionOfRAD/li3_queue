@@ -128,7 +128,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
 	public function reset(array $options = array()) {
 		$defaults = array(
-			'timeout' => 0,
+			'timeout' => 1,
 			'tube' => 'default'
 		);
 		$options += $defaults;

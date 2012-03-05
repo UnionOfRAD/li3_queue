@@ -17,7 +17,7 @@ This plugin provides a simple way to handle work queues, it currently supports:
 
 2. Then configure your queues in `app/config/bootstrap/queues.php`:
 
-        use li3_queue\Queue;
+        use li3_queue\storage\Queue;
 
         Queue::config(array('default' => array(
             'adapter' => 'Beanstalk',
@@ -46,8 +46,8 @@ This plugin provides a simple way to handle work queues, it currently supports:
         );
         $options = array(
             'tube' => 'preview',
-            'priority' => 500,
-            'delay' => 5
+            'priority' => 9,
+            'delay' => 30
         );
 
         $jobId = Queue::add($task, $options);
