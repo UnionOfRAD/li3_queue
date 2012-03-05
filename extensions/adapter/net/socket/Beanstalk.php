@@ -96,7 +96,7 @@ class Beanstalk extends \lithium\net\socket\Stream {
 	 * @param string $data The job body
 	 * @return integer|boolean False on error otherwise and integer indicating the job id
 	 */
-	public function put($priority, $delay, $ttr, string $data) {
+	public function put($priority, $delay, $ttr, $data) {
 		$this->write(sprintf('put %d %d %d %d', $priority, $delay, $ttr, strlen($data)));
 		$this->write($data);
 		$status = strtok($this->read(), ' ');
@@ -200,7 +200,7 @@ class Beanstalk extends \lithium\net\socket\Stream {
 	 * @param integer $delay Number of seconds to wait before putting the job in the ready queue
 	 * @return boolean False on error, true on success
 	 */
-	public function release($id, $pri, $delay) {
+	public function release($id, $pri = 1, $delay = 0) {
 		$this->write(sprintf('release %d %d %d', $id, $pri, $delay));
 		$status = $this->read();
 
@@ -225,7 +225,7 @@ class Beanstalk extends \lithium\net\socket\Stream {
 	 * @param mixed $pri
 	 * @return boolean False on error and true on success
 	 */
-	public function bury($id, $pri) {
+	public function bury($id, $pri = 1) {
 		$this->write(sprintf('bury %d %d', $id, $pri));
 		$status = $this->read();
 
@@ -420,33 +420,5 @@ class Beanstalk extends \lithium\net\socket\Stream {
 				return false;
 		}
 	}
-
-	/**
-	 * Returns a list of all existing tubes
-	 *
-	 * @return string|boolean False on error otherwise a string with a yaml formatted list
-	 */
-	public function listTubes() {}
-
-	/**
-	 * Returns the tube currently being used by the producer
-	 *
-	 * @return string|boolean False on error otherwise a string with the name of the tube
-	 */
-	public function listTubeUsed() {}
-
-	/**
-	 * Alias for listTubeUsed
-	 */
-	public function listTubeChosen() {
-		return $this->listTubeUsed();
-	}
-
-	/**
-	 * Returns a list of tubes currently being watched by the worker
-	 *
-	 * @return string|boolean False on error otherwise a string with a yaml formatted list
-	 */
-	public function listTubesWatched() {}
 
 }

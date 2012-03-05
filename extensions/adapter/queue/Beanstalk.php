@@ -13,7 +13,7 @@ namespace li3_queue\extensions\adapter\queue;
 use lithium\core\NetworkException;
 use li3_queue\extensions\adapter\net\socket\Beanstalk as BeanstalkSocket;
 
-class Beanstalk extends \li3_queue\storage\Queue {
+class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
 	/**
 	 * Stores a connection to a remote resource. Usually a database connection (`resource` type),
