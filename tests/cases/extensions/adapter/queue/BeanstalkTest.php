@@ -19,8 +19,8 @@ class BeanstalkTest extends \lithium\test\Unit {
 		'port' => 11300
 	);
 
-	protected $_testTube = '_test';
-	protected $_uniqueJob = '_test';
+	protected $_testTube = 'test_tube';
+	protected $_uniqueJob;
 
 	public function skip() {
 		$message = "Beanstalk server is not running.";

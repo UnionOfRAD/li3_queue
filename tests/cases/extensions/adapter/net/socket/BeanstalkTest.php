@@ -17,6 +17,8 @@ class BeanstalkTest extends \lithium\test\Unit {
 		'port' => 11300
 	);
 
+	protected $_testTube = 'test_tube';
+
 	public function skip() {
 		$message = "Beanstalk server is not running.";
 		$this->skipIf(!$this->_hasNetwork($this->_testConfig), $message);
@@ -83,7 +85,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$result = $stream->choose('_test');
+		$result = $stream->choose($this->_testTube);
 		$this->assertTrue($result);
 	}
 
@@ -91,7 +93,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$result = $stream->watch('_test');
+		$result = $stream->watch($this->_testTube);
 		$this->assertTrue(is_numeric($result));
 	}
 
@@ -99,8 +101,8 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$stream->watch('_test');
-		$result = $stream->ignore('_test');
+		$stream->watch($this->_testTube);
+		$result = $stream->ignore($this->_testTube);
 		$this->assertTrue($result);
 	}
 
@@ -108,7 +110,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$result = $stream->choose('_test');
+		$result = $stream->choose($this->_testTube);
 		$result = $stream->put(1, 0, 60, 'foo');
 		$this->assertTrue(is_numeric($result));
 	}
@@ -131,7 +133,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$stream->choose('_test');
+		$stream->choose($this->_testTube);
 		$jobId = $stream->put(1, 0, 60, 'foo');
 		$result = $stream->peek($jobId);
 		$this->assertTrue(is_array($result) && !empty($result['id']));
@@ -142,9 +144,9 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$stream->choose('_test');
+		$stream->choose($this->_testTube);
 		$jobId = $stream->put(1, 0, 60, 'foo');
-		$stream->watch('_test');
+		$stream->watch($this->_testTube);
 		$job = $stream->reserve();
 		$result = $stream->release($job['id']);
 		$this->assertTrue($result);
@@ -154,7 +156,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$stream->choose('_test');
+		$stream->choose($this->_testTube);
 		$jobId = $stream->put(1, 0, 60, 'foo');
 		$result = $stream->delete($jobId);
 		$this->assertTrue($result);
@@ -164,9 +166,9 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$stream = new BeanstalkSocket($this->_testConfig);
 		$this->assertTrue(is_resource($stream->open()));
 
-		$stream->choose('_test');
+		$stream->choose($this->_testTube);
 		$jobId = $stream->put(1, 0, 60, 'foo');
-		$stream->watch('_test');
+		$stream->watch($this->_testTube);
 		$job = $stream->reserve();
 		$result = $stream->bury($job['id']);
 		$this->assertTrue($result);
