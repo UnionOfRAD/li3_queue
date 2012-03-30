@@ -2,7 +2,7 @@
 
 namespace li3_queue\extensions\adapter\queue;
 
-class Gearman extends \li3_queue\storage\Queue {
+class Gearman extends \li3_queue\extensions\adapter\Queue {
 	protected $_autoConfig = array('classes' => 'merge');
 
 	protected $_classes = array(
@@ -61,7 +61,7 @@ class Gearman extends \li3_queue\storage\Queue {
 				break;
 		}
 
-		return ($this->client->returnCode() == GEARMAN_SUCCESS);
+		return (strlen($handle) != 0);
 	}
 
 	/**
@@ -74,6 +74,11 @@ class Gearman extends \li3_queue\storage\Queue {
 		return false;
 	}
 
+	/**
+	 * @param array $options
+	 *              - `'once'` _string_: Run one task
+	 * @return boolean
+	 */
 	public function run(array $options = array()) {
 		$default = array('once' => false);
 		$options += $default;

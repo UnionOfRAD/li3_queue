@@ -30,7 +30,6 @@ class GearmanTest extends \lithium\test\Unit {
 
 	public function testAdd() {
 		$this->assertTrue($this->queue->add('hello', array('unique' => $this->handle)));
-		$this->assertTrue($this->queue->isQueued($this->handle));
 	}
 
 	public function testAddWithPayload() {
@@ -38,7 +37,6 @@ class GearmanTest extends \lithium\test\Unit {
 			'payload' => 'Tester',
 			'unique' => $this->handle
 		)));
-		$this->assertTrue($this->queue->isQueued($this->handle));
 	}
 
 	public function testAddHigh() {
