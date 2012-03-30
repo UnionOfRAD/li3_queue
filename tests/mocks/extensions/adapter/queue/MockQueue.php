@@ -2,7 +2,7 @@
 
 namespace li3_queue\tests\mocks\extensions\adapter\queue;
 
-class MockQueue extends \li3_queue\storage\Queue {
+class MockQueue extends \li3_queue\extensions\adapter\Queue {
 	protected $_queue = array();
 
 	public function add($task, array $options = array()) {

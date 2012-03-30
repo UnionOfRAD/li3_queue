@@ -16,7 +16,7 @@ class Queue extends \lithium\console\Command {
 	 * @return boolean
 	 */
 	public function add($task, $payload = '', $config = 'default') {
-		return \li3_queue\Queue::add($task, compact('payload', 'config'));
+		return \li3_queue\storage\Queue::add($task, compact('payload', 'config'));
 	}
 
 	/**
@@ -27,7 +27,7 @@ class Queue extends \lithium\console\Command {
 	 * @return mixed The return value of the task
 	 */
 	public function run($config = 'default') {
-		return \li3_queue\Queue::run(compact('config'));
+		return \li3_queue\storage\Queue::run(compact('config'));
 	}
 }
 
