@@ -155,7 +155,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 		$options += $defaults;
 		extract($options, EXTR_OVERWRITE);
 
-		if($tube && !$this->watch($tube)) {
+		if($tube && !$this->choose($tube)) {
 			return false;
 		}
 
