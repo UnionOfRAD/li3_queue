@@ -6,8 +6,8 @@ by `Christopher Garvis` & `Olivier Louvignes`
 
 This plugin provides a simple way to handle work queues, it currently supports:
 
-* [Beanstalk](http://kr.github.com/beanstalkd/)
-
+* [Beanstalk](http://kr.github.com/beanstalkd/).
+* [Gearman](http://gearman.org/) in the gearman branch.
 
 ### Installation
 
@@ -35,6 +35,8 @@ This plugin provides a simple way to handle work queues, it currently supports:
 4. You can now use your configured queues in your application:
 
         use li3_queue\Queue;
+
+5. There is some [known bugs](https://bugs.php.net/60817) with several PHP versions regarding the `stream_get_line` function that can incorrectly fail to return on `\r\n EOL` packets. Unfortunately this bug affects the 12.04 shipped PHP version (php5.3.10-1).
 
 
 #### Beanstalk interface
@@ -70,7 +72,7 @@ This plugin provides a simple way to handle work queues, it currently supports:
         $queue = Queue::adapter('default');
         $stats = $queue->statistics();
 
-* Check [source](https://github.com/UnionOfRAD/li3_queue/blob/master-beanstalk/extensions/adapter/queue/Beanstalk.php) for additional configuration.
+* Check [source](https://github.com/UnionOfRAD/li3_queue/blob/master/extensions/adapter/queue/Beanstalk.php) for additional configuration.
 
 
 ### Bugs & Contribution
