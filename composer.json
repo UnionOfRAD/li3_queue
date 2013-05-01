@@ -1,0 +1,23 @@
+{
+	"name": "unionofrad/li3_queue",
+	"type": "lithium-library",
+	"description": "This plugin provides a simple way to handle work queues.",
+	"keywords": ["queues", "beanstalk", "lithium", "li3", "gearman"],
+	"homepage": "https://github.com/UnionOfRAD/li3_queue",
+	"license": "MIT License",
+	"authors": [
+		{
+			"name": "Olivier Louvignes",
+			"email": "olivier@mg-crea.com",
+			"homepage": "http://olouv.com/"
+		},
+		{
+			"name": "Christopher Garvis",
+			"homepage": "http://www.christophergarvis.com/"
+		}
+	],
+	"require": {
+		"php": ">=5.3",
+		"composer/installers": "*"
+	}
+}
