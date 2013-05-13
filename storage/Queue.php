@@ -14,6 +14,12 @@ class Queue extends \lithium\core\Adaptable {
 	protected static $_adapters = 'adapter.queue';
 
 	/**
+	 * Re-define configurations to avoid overwrite configurations of other adapters
+	 * @var array the configurations 
+	 */
+	protected static $_configurations = array();
+
+	/**
 	 * @param string $task task name to queue
 	 * @param array $options Extra options
 	 * @return mixed Returned value by adapter's add() method
