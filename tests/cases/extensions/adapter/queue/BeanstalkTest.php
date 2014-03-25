@@ -28,7 +28,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 	}
 
 	protected function _hasNetwork($config = array()) {
-		$socket = fsockopen($config['host'], $config['port']);
+		$socket = @fsockopen($config['host'], $config['port']);
 		if($socket) fclose($socket);
 		return !!$socket;
 	}
