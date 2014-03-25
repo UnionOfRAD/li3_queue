@@ -5,7 +5,7 @@ namespace li3_queue\tests\cases\storage;
 use li3_queue\storage\Queue;
 
 class QueueTest extends \lithium\test\Unit {
-	
+
 	protected $_configurations = null;
 
 	protected $_testConfigs = array(
