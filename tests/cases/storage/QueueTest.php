@@ -25,7 +25,7 @@ class QueueTest extends \lithium\test\Unit {
 	}
 
 	public function testConfiguration() {
-		$this->assertFalse(Queue::config('no-config'));
+		$this->assertNull(Queue::config('no-config'));
 
 		$expected = array(
 			'adapter' => 'li3_queue\tests\mocks\extensions\adapter\queue\MockQueue',
