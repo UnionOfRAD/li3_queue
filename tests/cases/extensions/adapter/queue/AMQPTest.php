@@ -70,7 +70,17 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testSimpleRead() {
+		$amqp = $this->amqp;
 
+		$expected = array(
+			'body' => 'message',
+			'timestamp' => 0,
+			'expiration' => '',
+			'priority' => 0,
+			'isRedelivery' => 0
+		);
+		$result = $amqp->read();
+		$this->assertEqual($expected, $result);
 	}
 
 	public function testDisconnect() {
