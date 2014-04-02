@@ -15,9 +15,45 @@ class Queue extends \lithium\core\Adaptable {
 
 	/**
 	 * Re-define configurations to avoid overwrite configurations of other adapters
-	 * @var array the configurations 
+	 * @var array the configurations
 	 */
 	protected static $_configurations = array();
+
+	/**
+	 * Reads from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for reading
+	 * @param mixed $data Data to be queued
+	 * @param mixed $options Options for the method
+	 * @return boolean True on successful cache write, false otherwise
+	 */
+	public static function write($name, $data, array $options = array()) {
+		$settings = static::config();
+
+		if(!isset($settings[$name])) {
+			return false;
+		}
+
+		$method = static::adapter($name)->write($data, $options);
+		return $method;
+	}
+
+	/**
+	 * Reads from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for reading
+	 * @param mixed $options Options for the method
+	 * @return mixed Read results on successful queue read, null otherwise
+	 */
+	public static function read($name) {}
+
+	/**
+	 * Consume from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return mixed Read results on successful queue read, null otherwise
+	 */
+	public static function consume($name) {}
 
 	/**
 	 * @param string $task task name to queue
