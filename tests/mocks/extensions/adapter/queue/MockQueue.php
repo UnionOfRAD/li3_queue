@@ -6,6 +6,21 @@ class MockQueue extends \li3_queue\extensions\adapter\Queue {
 
 	protected $_queue = array();
 
+	public function write($data, array $options = array()) {
+		$this->_queue[] = array('data' => $data, 'options' => $options);
+		return true;
+	}
+
+	public function read(array $options = array()) {
+		$queue = $this->_queue;
+
+		if(!empty($queue)) {
+			$result = array_shift($queue);
+			return $result;
+		}
+		return null;
+	}
+
 	public function add($task, array $options = array()) {
 		$this->_queue[] = array('task' => $task, 'options' => $options);
 		return true;
