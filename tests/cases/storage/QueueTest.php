@@ -13,20 +13,14 @@ class QueueTest extends \lithium\test\Unit {
 		));
 	}
 
-	public function tearDown() {
-		Queue::reset();
-		Queue::config($this->_configurations);
+	public function testWriteNoConfig() {
+		$result = Queue::write('no-config', 'data');
+		$this->assertFalse($result);
 	}
 
-	public function testConfiguration() {
-		$this->assertNull(Queue::config('no-config'));
-
-		$expected = array(
-			'adapter' => 'li3_queue\tests\mocks\extensions\adapter\queue\MockQueue',
-			'filters' => array()
-		);
-		$result = Queue::config('default');
-		$this->assertEqual($expected, $result);
+	public function testWrite() {
+		$result = Queue::write('default', 'data');
+		$this->assertTrue($result);
 	}
 
 	public function testAdd() {
