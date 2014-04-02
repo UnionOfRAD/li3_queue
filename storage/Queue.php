@@ -45,7 +45,16 @@ class Queue extends \lithium\core\Adaptable {
 	 * @param mixed $options Options for the method
 	 * @return mixed Read results on successful queue read, null otherwise
 	 */
-	public static function read($name) {}
+	public static function read($name, array $options = array()) {
+		$settings = static::config();
+
+		if(!isset($settings[$name])) {
+			return false;
+		}
+
+		$method = static::adapter($name)->read($options);
+		return $method;
+	}
 
 	/**
 	 * Consume from the specified queue configuration
