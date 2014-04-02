@@ -18,9 +18,22 @@ class QueueTest extends \lithium\test\Unit {
 		$this->assertFalse($result);
 	}
 
+	public function testReadNoConfig() {
+		$result = Queue::read('no-config');
+		$this->assertFalse($result);
+	}
+
 	public function testWrite() {
 		$result = Queue::write('default', 'data');
 		$this->assertTrue($result);
+	}
+
+	public function testRead() {
+		$result = Queue::write('default', 'data');
+		$this->assertTrue($result);
+
+		$result = Queue::read('default');
+		$this->assertEqual('data', $result['data']);
 	}
 
 	public function testAdd() {
