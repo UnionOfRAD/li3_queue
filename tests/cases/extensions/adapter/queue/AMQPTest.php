@@ -63,7 +63,10 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testSimpleWrite() {
+		$amqp = $this->amqp;
 
+		$result = $amqp->write('data');
+		$this->assertTrue($result);
 	}
 
 	public function testSimpleRead() {
