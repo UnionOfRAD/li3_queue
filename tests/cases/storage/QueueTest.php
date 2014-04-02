@@ -3,20 +3,14 @@
 namespace li3_queue\tests\cases\storage;
 
 use li3_queue\storage\Queue;
+use li3_queue\tests\mocks\extensions\adapter\queue\MockQueue;
 
 class QueueTest extends \lithium\test\Unit {
 
-	protected $_configurations = null;
-
-	protected $_testConfigs = array(
-		'default' => array(
-			'adapter' => 'li3_queue\tests\mocks\extensions\adapter\queue\MockQueue'
-		)
-	);
-
 	public function setUp() {
-		$this->_configurations = Queue::config();
-		Queue::config($this->_testConfigs);
+		Queue::config(array(
+			'default' => array('adapter' => new MockQueue())
+		));
 	}
 
 	public function tearDown() {
