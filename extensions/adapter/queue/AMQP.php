@@ -139,7 +139,10 @@ class AMQP extends \lithium\core\Object {
 
 		$routing_key = $config['routingKey'] ?: $config['queue'];
 
-		$exchange = $this->exchange(array('queue' => $config['queue'], 'routingKey' => $config['routingKey']));
+		$exchange = $this->exchange(array(
+			'queue' => $config['queue'],
+			'routingKey' => $config['routingKey']
+		));
 		return $exchange->publish($data, $routing_key);
 	}
 
