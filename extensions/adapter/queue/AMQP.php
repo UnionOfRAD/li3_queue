@@ -134,6 +134,20 @@ class AMQP extends \lithium\core\Object {
 	public function write($data, array $options = array()) {
 		$config = $this->_config;
 		$defaults = array(
+			'flags' => AMQP_NOPARAM,
+			'attributes' => array(
+				'content_type' => 'text/plain',
+				'content_encoding' => null,
+				'message_id' => null,
+				'user_id' => null,
+				'app_id' => null,
+				'delivery_mode' => 2,
+				'priority' => null,
+				'timestamp' => null,
+				'expiration' => null,
+				'type' => null,
+				'reply_to' => null,
+			)
 		);
 		$options += $defaults;
 
@@ -143,7 +157,7 @@ class AMQP extends \lithium\core\Object {
 			'queue' => $config['queue'],
 			'routingKey' => $config['routingKey']
 		));
-		return $exchange->publish($data, $routing_key);
+		return $exchange->publish($data, $routing_key, $options['flags'], $options['attributes']);
 	}
 
 	/**
