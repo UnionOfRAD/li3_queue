@@ -62,14 +62,14 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertTrue($result);
 	}
 
-	public function testSimpleWrite() {
+	public function testWrite() {
 		$amqp = $this->amqp;
 
-		$result = $amqp->write('data');
+		$result = $amqp->write('message');
 		$this->assertTrue($result);
 	}
 
-	public function testSimpleRead() {
+	public function testReadWithAck() {
 		$amqp = $this->amqp;
 
 		$expected = array(
@@ -81,6 +81,8 @@ class AMQPTest extends \lithium\test\Unit {
 		);
 		$result = $amqp->read();
 		$this->assertEqual($expected, $result);
+		$result = $amqp->ack();
+		$this->assertTrue($result);
 	}
 
 	public function testDisconnect() {
