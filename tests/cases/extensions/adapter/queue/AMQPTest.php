@@ -74,15 +74,47 @@ class AMQPTest extends \lithium\test\Unit {
 
 		$expected = array(
 			'body' => 'message',
-			'timestamp' => 0,
-			'expiration' => '',
-			'priority' => 0,
-			'isRedelivery' => 0
+			'isRedelivery' => false
 		);
+
 		$result = $amqp->read();
 		$this->assertEqual($expected, $result);
+
 		$result = $amqp->ack();
 		$this->assertTrue($result);
+	}
+
+	public function testReadWithNack() {
+		$amqp = $this->amqp;
+
+		$amqp->write('message');
+		$amqp->read();
+
+		$result = $amqp->nack();
+		$this->assertTrue($result);
+	}
+
+	public function testReadRedelivery() {
+		$amqp = $this->amqp;
+
+		$result = $amqp->read();
+		$expected = array(
+			'body' => 'message',
+			'isRedelivery' => true
+		);
+		$this->assertEqual($expected, $result);
+
+		$amqp->ack();
+	}
+
+	public function testAckWithoutMessage() {
+		$result = $this->amqp->ack();
+		$this->assertNull($result);
+	}
+
+	public function testNackWithoutMessage() {
+		$result = $this->amqp->nack();
+		$this->assertNull($result);
 	}
 
 	public function testDisconnect() {
