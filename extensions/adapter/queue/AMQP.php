@@ -39,11 +39,11 @@ class AMQP extends \lithium\core\Object {
 	public $queue = null;
 
 	/**
-	 * Messages.
+	 * `AMQPEnvelope` object instance used by this adapter.
 	 *
 	 * @var object
 	 */
-	public $messages = array();
+	public $envelope = null;
 
 	public function __construct(array $config = array()) {
 		$defaults = array(
@@ -116,15 +116,12 @@ class AMQP extends \lithium\core\Object {
 	public function write($data, array $options = array()) {
 		$config = $this->_config;
 		$defaults = array(
-			'exchange' => $config['exchange'],
-			'queue' => $config['queue'],
-			'routingKey' => $config['routingKey']
 		);
 		$options += $defaults;
 
-		$routing_key = $options['routingKey'] ?: $options['queue'];
+		$routing_key = $config['routingKey'] ?: $config['queue'];
 
-		$exchange = $this->exchange($options['exchange'], array('queue' => $options['queue'], 'routingKey' => $routing_key));
+		$exchange = $this->exchange(array('queue' => $config['queue'], 'routingKey' => $config['routingKey']));
 		return $exchange->publish($data, $routing_key);
 	}
 
@@ -136,32 +133,25 @@ class AMQP extends \lithium\core\Object {
 	public function read(array $options = array()) {
 		$config = $this->_config;
 		$defaults = array(
-			'exchange' => $config['exchange'],
-			'queue' => $config['queue'],
 			'flag' => $config['autoAck']
 		);
 		$options += $defaults;
 
-		$queue = $this->queue($options['queue']);
+		$this->nack();
+		$queue = $this->queue();
 		$envelope = $queue->get($options['flag']);
 		$message = array();
 
-		if(is_object($envelope)) {
-
+		if($envelope instanceof AMQPEnvelope) {
 			$message = array(
 				'body' => $envelope->getBody(),
-				'timestamp' => $envelope->getTimestamp(),
-				'expiration' => $envelope->getExpiration(),
-				'priority' => $envelope->getPriority(),
-				'isRedelivery' => $envelope->isRedelivery()?:0
+				'isRedelivery' => $envelope->isRedelivery()?:false
 			);
 
 			if($options['flag'] != AMQP_AUTOACK) {
-				$this->messages[$options['queue']] = $envelope->getDeliveryTag();
+				$this->envelope = $envelope;
 			}
-
 		}
-
 		return $message;
 	}
 
@@ -173,38 +163,42 @@ class AMQP extends \lithium\core\Object {
 	public function ack($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
-			'queue' => $config['queue'],
 			'flag' => AMQP_NOPARAM
 		);
 		$options += $defaults;
 
-		if(!empty($this->messages[$options['queue']])) {
-			$queue = $this->queue($options['queue']);
-			$delivery_tag = $this->messages[$options['queue']];
-			unset($this->messages[$options['queue']]);
-			return $queue->ack($delivery_tag, $options['flag']);
+		if($this->envelope instanceof AMQPEnvelope) {
+			$queue = $this->queue();
+			$tag = $this->envelope->getDeliveryTag();
+
+			if($queue->ack($tag, $options['flag'])) {
+				$this->envelope = null;
+				return true;
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * Acknowledge a message has failed to be processed.
+	 * Unacknowledge a message if it has failed to be processed.
 	 *
 	 * @return .
 	 */
 	public function nack($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
-			'queue' => $config['queue'],
-			'flag' => AMQP_NOPARAM
+			'flag' => AMQP_REQUEUE
 		);
 		$options += $defaults;
 
-		if(!empty($this->acknowledge[$options['queue']])) {
-			$queue = $this->queue($options['queue']);
-			$delivery_tag = $this->acknowledge[$options['queue']];
-			unset($this->acknowledge[$options['queue']]);
-			return $queue->nack($delivery_tag, $options['flag']);
+		if($this->envelope instanceof AMQPEnvelope) {
+			$queue = $this->queue();
+			$tag = $this->envelope->getDeliveryTag();
+
+			if($queue->nack($tag, $options['flag'])) {
+				$this->envelope = null;
+				return true;
+			}
 		}
 		return null;
 	}
@@ -222,8 +216,8 @@ class AMQP extends \lithium\core\Object {
 	 *
 	 * @return .
 	 */
-	public function channel($connection) {
-		if($connection) {
+	public function channel() {
+		if($this->connection) {
 			if(!$this->channel) {
 				$this->channel = new AMQPChannel($this->connection);
 			}
@@ -237,27 +231,26 @@ class AMQP extends \lithium\core\Object {
 	 *
 	 * @return .
 	 */
-	public function exchange($name = 'default', $options = array()) {
+	public function exchange($options = array()) {
+		$config = $this->_config;
 		$defaults = array(
 			'type' => AMQP_EX_TYPE_DIRECT,
-			'flags' => AMQP_DURABLE,
-			'queue' => 'default',
-			'routingKey' => null
+			'flags' => AMQP_DURABLE
 		);
 		$options = $options + $defaults;
-		$channel = $this->channel($this->connection);
+		$channel = $this->channel();
 
 		if($channel) {
 			$exchange = $this->exchange;
 			if(!$exchange) {
 				$exchange = new AMQPExchange($channel);
-				$exchange->setName($name);
+				$exchange->setName($config['exchange']);
 				$exchange->setType($options['type']);
 				$exchange->setFlags($options['flags']);
 				$exchange->declareExchange();
 				$this->exchange = $exchange;
 			}
-			$this->queue($options['queue'], array('exchange' => $name, 'routingKey' => $options['routingKey']));
+			$this->queue();
 			return $exchange;
 		}
 		return false;
@@ -268,24 +261,23 @@ class AMQP extends \lithium\core\Object {
 	 *
 	 * @return .
 	 */
-	public function queue($name, $options = array()) {
+	public function queue($options = array()) {
+		$config = $this->_config;
 		$defaults = array(
-			'flags' => AMQP_DURABLE,
-			'exchange' => null,
-			'routingKey' => null
+			'flags' => AMQP_DURABLE
 		);
 		$options = $options + $defaults;
-		$channel = $this->channel($this->connection);
+		$channel = $this->channel();
 
 		if($channel) {
 			$queue = $this->queue;
-			if(!$queue) {
+			if(!$queue instanceof AMQPQueue) {
 				$queue = new AMQPQueue($channel);
-				$queue->setName($name);
+				$queue->setName($config['queue']);
 				$queue->setFlags($options['flags']);
 				$queue->declareQueue();
-				if($options['exchange'] && $options['routingKey']) {
-					$queue->bind($options['exchange'], $options['routingKey']);
+				if($config['exchange'] && $config['routingKey']) {
+					$queue->bind($config['exchange'], $config['routingKey']);
 				}
 				$this->queue = $queue;
 			}
@@ -301,14 +293,6 @@ class AMQP extends \lithium\core\Object {
 	 */
 	public function purge() {
 
-	}
-
-	protected function _encode($data) {
-		return json_encode($data);
-	}
-
-	protected function _decode($data) {
-		return json_decode($data);
 	}
 
 	/**
