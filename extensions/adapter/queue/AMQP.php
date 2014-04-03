@@ -38,6 +38,13 @@ class AMQP extends \lithium\core\Object {
 	 */
 	public $queue = null;
 
+	/**
+	 * Messages.
+	 *
+	 * @var object
+	 */
+	public $messages = array();
+
 	public function __construct(array $config = array()) {
 		$defaults = array(
 			'host' => '127.0.0.1',
@@ -150,7 +157,7 @@ class AMQP extends \lithium\core\Object {
 			);
 
 			if($options['flag'] != AMQP_AUTOACK) {
-				$this->acknowledge[$options['queue']] = $envelope->getDeliveryTag();
+				$this->messages[$options['queue']] = $envelope->getDeliveryTag();
 			}
 
 		}
@@ -171,10 +178,10 @@ class AMQP extends \lithium\core\Object {
 		);
 		$options += $defaults;
 
-		if(!empty($this->acknowledge[$options['queue']])) {
+		if(!empty($this->messages[$options['queue']])) {
 			$queue = $this->queue($options['queue']);
-			$delivery_tag = $this->acknowledge[$options['queue']];
-			unset($this->acknowledge[$options['queue']]);
+			$delivery_tag = $this->messages[$options['queue']];
+			unset($this->messages[$options['queue']]);
 			return $queue->ack($delivery_tag, $options['flag']);
 		}
 		return null;
