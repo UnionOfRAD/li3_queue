@@ -117,6 +117,17 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertNull($result);
 	}
 
+	public function testPurgeQueue() {
+		$amqp = $this->amqp;
+
+		for($x=0; $x<10; $x++) {
+			$amqp->write('message_'.$x);
+		}
+
+		$result = $amqp->purge();
+		$this->assertTrue($result);
+	}
+
 	public function testDisconnect() {
 		$amqp = $this->amqp;
 

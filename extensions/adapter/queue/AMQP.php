@@ -327,7 +327,7 @@ class AMQP extends \lithium\core\Object {
 	 * @return .
 	 */
 	public function purge() {
-
+		return $this->queue->purge();
 	}
 
 	/**
