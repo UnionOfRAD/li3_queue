@@ -45,6 +45,24 @@ class AMQP extends \lithium\core\Object {
 	 */
 	public $envelope = null;
 
+	/**
+	 * Adds config values to the public properties when a new object is created.
+	 *
+	 * @param array $config Configuration options : default value
+	 *        - `'host'` _string_: '127.0.0.1'
+	 *        - `'login'` _string_: 'guest'
+	 *        - `'password'` _string_: 'guest'
+	 *        - `'port'` _interger_: 5672
+	 *        - `'vhost'` _string_: '/'
+	 *        - `'exchange'` _string_: 'li3.default'
+	 *        - `'queue'` _string_: 'li3.default'
+	 *        - `'routingKey'` _mixed_: null
+	 *        - `'autoAck'` _mixed_: 0
+	 *        - `'minMessages'` _interger_: 0
+	 *        - `'maxMessages'` _interger_: 1
+	 *        - `'prefetchCount'` _interger_: 3
+	 *        - `'autoConnect'` _interger_: 1
+	 */
 	public function __construct(array $config = array()) {
 		$defaults = array(
 			'host' => '127.0.0.1',
