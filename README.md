@@ -6,6 +6,7 @@ by `Christopher Garvis` & `Olivier Louvignes`
 
 This plugin provides a simple way to handle work queues, it currently supports:
 
+* [AMQP](http://pecl.php.net/package/amqp/)
 * [Beanstalk](http://kr.github.com/beanstalkd/)
 * [Gearman](http://gearman.org/) in the gearman branch
 
@@ -38,6 +39,78 @@ This plugin provides a simple way to handle work queues, it currently supports:
 
 5. There is some [known bugs](https://bugs.php.net/60817) with several PHP versions regarding the `stream_get_line` function that can incorrectly fail to return on `\r\n EOL` packets. Unfortunately this bug affects the 12.04 shipped PHP version (php5.3.10-1).
 
+### AMQP interface
+
+#### Configuration
+
+Configuration for your queue will go in `app/config/bootstrap/queues.php` and can contain any of the following options:
+
+```php
+Queue::config(array(
+    'default' => array(
+        'adapter' => 'AMQP',
+        'host' => '127.0.0.1',
+        'login' => 'guest',
+        'password' => 'guest',
+        'port' => 5672,
+        'vhost' => '/',
+        'exchange' => 'li3.default',
+        'queue' => 'li3.default',
+        'routingKey' => null,
+        'autoAck' => false
+    )
+));
+```
+
+Additional notes:
+
+1. `routingKey` when `null` will be set by default to the same value as `queue`, setting the routing key will only be needed in advanced configurations
+
+2. `autoAck` is a global way to enable `AUTO_ACK` when reading messages. If this is true messages will be automatically acknowledged on the server and whenever you use `Queue::read()` you will not need to follow it with `Queue::ack()`.
+
+#### Usage
+
+1. Write a message
+
+    ```php
+    Queue::write('default', 'message');
+    ```
+
+2. Read a message
+
+    ```php
+    $message = Queue::read('default');
+    ```
+
+3. Confirm or requeue a message
+
+    Once you've read a message from the queue you will either need to acknowledge it's success using:
+
+    ```php
+    Queue::ack('default');
+    ```
+
+    Or not acknowledge your message and requeue it using:
+
+    ```php
+    Queue::nack('default');
+    ```
+
+4. Consume messages
+
+    ```php
+    Queue::consume('default', function($message) {
+        // Do something with message
+        if($success) {
+            // Return true to acknowledge success
+            return true;
+        }
+        // Return false to requeue message
+        return false;
+    });
+    ```
+
+    Consuming messages is a blocking action which will retrieve the next available message and pass it off to the callback. Once you have dealt with the message you can acknowledge it with `return true` or requeue it with `return false`.
 
 ### Beanstalk interface
 
