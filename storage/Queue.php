@@ -74,6 +74,23 @@ class Queue extends \lithium\core\Adaptable {
 	}
 
 	/**
+	 * Purge from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return non returning
+	 */
+	public static function purge($name) {
+		$settings = static::config();
+
+		if(!isset($settings[$name])) {
+			return false;
+		}
+
+		$method = static::adapter($name)->purge();
+		return $method;
+	}
+
+	/**
 	 * @param string $task task name to queue
 	 * @param array $options Extra options
 	 * @return mixed Returned value by adapter's add() method
