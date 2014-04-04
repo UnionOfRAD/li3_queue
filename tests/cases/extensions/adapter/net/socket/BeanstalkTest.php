@@ -44,17 +44,19 @@ class BeanstalkTest extends \lithium\test\Unit {
 
 	public function testOpen() {
 		$stream = new BeanstalkSocket($this->_testConfig);
+
 		$result = $stream->open();
-		$this->assertTrue($result);
+		$this->assertInternalType('resource', $result);
 
 		$result = $stream->resource();
-		$this->assertTrue(is_resource($result));
+		$this->assertInternalType('resource', $result);
 	}
 
 	public function testClose() {
 		$stream = new BeanstalkSocket($this->_testConfig);
+
 		$result = $stream->open();
-		$this->assertTrue($result);
+		$this->assertInternalType('resource', $result);
 
 		$result = $stream->close();
 		$this->assertTrue($result);
@@ -103,7 +105,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 
 		$stream->watch($this->_testTube);
 		$result = $stream->ignore($this->_testTube);
-		$this->assertTrue($result);
+		$this->assertEqual(1, $result);
 	}
 
 	public function testPut() {
