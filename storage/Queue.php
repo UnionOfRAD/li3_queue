@@ -60,9 +60,18 @@ class Queue extends \lithium\core\Adaptable {
 	 * Consume from the specified queue configuration
 	 *
 	 * @param string $name Configuration to be used for consuming
-	 * @return mixed Read results on successful queue read, null otherwise
+	 * @return non returning
 	 */
-	public static function consume($name) {}
+	public static function consume($name, $callback, array $options = array()) {
+		$settings = static::config();
+
+		if(!isset($settings[$name])) {
+			return false;
+		}
+
+		$method = static::adapter($name)->consume($callback, $options);
+		return $method;
+	}
 
 	/**
 	 * @param string $task task name to queue
