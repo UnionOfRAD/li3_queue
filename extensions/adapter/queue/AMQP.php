@@ -73,7 +73,7 @@ class AMQP extends \lithium\core\Object {
 			'exchange' => 'li3.default',
 			'queue' => 'li3.default',
 			'routingKey' => null,
-			'autoAck' => 0,
+			'autoAck' => false,
 			'minMessages' => 0,
 			'maxMessages' => 1,
 			'prefetchCount' => 3,
