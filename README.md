@@ -6,8 +6,8 @@ by `Christopher Garvis` & `Olivier Louvignes`
 
 This plugin provides a simple way to handle work queues, it currently supports:
 
-* [Beanstalk](http://kr.github.com/beanstalkd/).
-* [Gearman](http://gearman.org/) in the gearman branch.
+* [Beanstalk](http://kr.github.com/beanstalkd/)
+* [Gearman](http://gearman.org/) in the gearman branch
 
 ### Installation
 
