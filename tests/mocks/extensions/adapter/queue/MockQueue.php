@@ -21,6 +21,16 @@ class MockQueue extends \li3_queue\extensions\adapter\Queue {
 		return null;
 	}
 
+	public function consume($callback, array $options = array()) {
+		$queue = $this->_queue;
+
+		if(!empty($queue)) {
+			$result = array_shift($queue);
+			return $callback($result);
+		}
+		return null;
+	}
+
 	public function add($task, array $options = array()) {
 		$this->_queue[] = array('task' => $task, 'options' => $options);
 		return true;

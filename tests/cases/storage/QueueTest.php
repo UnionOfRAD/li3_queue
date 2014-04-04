@@ -14,7 +14,7 @@ class QueueTest extends \lithium\test\Unit {
 	}
 
 	public function testWriteNoConfig() {
-		$result = Queue::write('no-config', 'data');
+		$result = Queue::write('no-config', 'message');
 		$this->assertFalse($result);
 	}
 
@@ -24,16 +24,30 @@ class QueueTest extends \lithium\test\Unit {
 	}
 
 	public function testWrite() {
-		$result = Queue::write('default', 'data');
+		$result = Queue::write('default', 'message');
 		$this->assertTrue($result);
 	}
 
 	public function testRead() {
-		$result = Queue::write('default', 'data');
+		$result = Queue::write('default', 'message');
 		$this->assertTrue($result);
 
 		$result = Queue::read('default');
-		$this->assertEqual('data', $result['data']);
+		$this->assertEqual('message', $result['data']);
+	}
+
+	public function testConsume() {
+		Queue::write('default', 'message');
+
+		$expected = array(
+			'data' => 'message',
+			'options' => array()
+		);
+
+		Queue::consume('default', function($message) use ($expected) {
+			$this->assertEqual($expected, $message);
+			return true;
+		});
 	}
 
 	public function testAdd() {

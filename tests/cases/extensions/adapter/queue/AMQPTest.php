@@ -62,6 +62,17 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertTrue($result);
 	}
 
+	public function testPurgeQueue() {
+		$amqp = $this->amqp;
+
+		for($x=0; $x<10; $x++) {
+			$amqp->write('message_'.$x);
+		}
+
+		$result = $amqp->purge();
+		$this->assertTrue($result);
+	}
+
 	public function testWrite() {
 		$amqp = $this->amqp;
 
@@ -117,15 +128,18 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertNull($result);
 	}
 
-	public function testPurgeQueue() {
+	public function testConsume() {
 		$amqp = $this->amqp;
 
-		for($x=0; $x<10; $x++) {
-			$amqp->write('message_'.$x);
-		}
+		$amqp->write('message');
 
-		$result = $amqp->purge();
-		$this->assertTrue($result);
+		$result = $amqp->consume(function($m) {
+			return false;
+		}, array('return' => true));
+
+		$result = $amqp->consume(function($m) {
+			return true;
+		}, array('return' => true));
 	}
 
 	public function testDisconnect() {
