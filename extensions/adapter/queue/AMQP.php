@@ -224,7 +224,31 @@ class AMQP extends \lithium\core\Object {
 	 *
 	 * @return .
 	 */
-	public function consume() {
+	public function consume($callback, array $options = array()) {
+		$config = $this->_config;
+		$defaults = array(
+			'flag' => AMQP_NOPARAM,
+			'return' => false
+		);
+		$options += $defaults;
+
+		$this->nack();
+		$queue = $this->queue();
+
+		return $queue->consume(function($envelope, $queue) use ($callback, &$options) {
+			$this->envelope = &$envelope;
+			$message = $this->envelope();
+
+			if($result = $callback($message)) {
+				$this->ack();
+			} else {
+				$this->nack();
+			}
+
+			if($options['return']) {
+				return false;
+			}
+		}, $options['flag']);
 	}
 
 	/**
