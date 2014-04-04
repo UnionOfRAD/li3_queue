@@ -374,6 +374,15 @@ class AMQP extends \lithium\core\Object {
 		return extension_loaded('amqp');
 	}
 
+	/**
+	 * Destructor.
+	 *
+	 * @return void
+	 */
+	public function __destruct() {
+		$this->disconnect();
+	}
+
 }
 
 ?>
