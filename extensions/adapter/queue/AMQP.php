@@ -166,27 +166,8 @@ class AMQP extends \lithium\core\Object {
 	 * @return .
 	 */
 	public function read(array $options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flag' => $config['autoAck']
-		);
-		$options += $defaults;
-
 		$this->nack();
-		$queue = $this->queue();
-		$envelope = $queue->get($options['flag']);
-		$message = array();
-
-		if($envelope instanceof AMQPEnvelope) {
-			$message = array(
-				'body' => $envelope->getBody(),
-				'isRedelivery' => $envelope->isRedelivery()?:false
-			);
-
-			if($options['flag'] != AMQP_AUTOACK) {
-				$this->envelope = $envelope;
-			}
-		}
+		$message = $this->envelope($options);
 		return $message;
 	}
 
@@ -318,6 +299,34 @@ class AMQP extends \lithium\core\Object {
 			}
 			return $queue;
 		}
+		return false;
+	}
+
+	public function envelope(array $options = array()) {
+		$config = $this->_config;
+		$defaults = array(
+			'flag' => ($config['autoAck']) ? AMQP_AUTOACK : 0
+		);
+		$options = $options + $defaults;
+		$envelope = $this->envelope;
+
+		if(!$envelope instanceof AMQPEnvelope) {
+			$queue = $this->queue();
+			$envelope = $queue->get($options['flag']);
+		}
+
+		if($envelope instanceof AMQPEnvelope) {
+			$message = array(
+				'body' => $envelope->getBody(),
+				'isRedelivery' => $envelope->isRedelivery()?:false
+			);
+
+			if($options['flag'] != AMQP_AUTOACK) {
+				$this->envelope = $envelope;
+			}
+			return $message;
+		}
+
 		return false;
 	}
 
