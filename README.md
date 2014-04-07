@@ -74,7 +74,7 @@ Additional notes:
 
 1. `routingKey` when `null` will be set by default to the same value as `queue`, setting the routing key will only be needed in advanced configurations
 
-2. `autoAck` is a global way to enable `AUTO_ACK` when reading messages. If this is true messages will be automatically acknowledged on the server and whenever you use `Queue::read()` you will not need to follow it with `Queue::ack()`.
+2. `autoAck` is a global way to enable `AUTO_ACK` when reading messages. If this is true messages will be automatically acknowledged on the server and whenever you use `Queue::read()` you will not need to follow it with `Queue::confirm()`.
 
 #### Usage
 
