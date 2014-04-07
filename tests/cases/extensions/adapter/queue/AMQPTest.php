@@ -80,7 +80,7 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertTrue($result);
 	}
 
-	public function testReadWithAck() {
+	public function testReadWithConfirm() {
 		$amqp = $this->amqp;
 
 		$expected = array(
@@ -91,17 +91,17 @@ class AMQPTest extends \lithium\test\Unit {
 		$result = $amqp->read();
 		$this->assertEqual($expected, $result);
 
-		$result = $amqp->ack();
+		$result = $amqp->confirm();
 		$this->assertTrue($result);
 	}
 
-	public function testReadWithNack() {
+	public function testReadWithRequeue() {
 		$amqp = $this->amqp;
 
 		$amqp->write('message');
 		$amqp->read();
 
-		$result = $amqp->nack();
+		$result = $amqp->requeue();
 		$this->assertTrue($result);
 	}
 
@@ -115,7 +115,7 @@ class AMQPTest extends \lithium\test\Unit {
 		);
 		$this->assertEqual($expected, $result);
 
-		$amqp->ack();
+		$amqp->confirm();
 	}
 
 	public function testAckWithoutMessage() {
