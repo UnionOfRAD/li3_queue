@@ -190,54 +190,6 @@ class AMQP extends \lithium\core\Object {
 	}
 
 	/**
-	 * Acknowledge a message has been processed.
-	 *
-	 * @return .
-	 */
-	public function ack($options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flag' => AMQP_NOPARAM
-		);
-		$options += $defaults;
-
-		if($this->envelope instanceof AMQPEnvelope) {
-			$queue = $this->queue();
-			$tag = $this->envelope->getDeliveryTag();
-
-			if($queue->ack($tag, $options['flag'])) {
-				$this->envelope = null;
-				return true;
-			}
-		}
-		return null;
-	}
-
-	/**
-	 * Unacknowledge a message if it has failed to be processed.
-	 *
-	 * @return .
-	 */
-	public function nack($options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flag' => AMQP_REQUEUE
-		);
-		$options += $defaults;
-
-		if($this->envelope instanceof AMQPEnvelope) {
-			$queue = $this->queue();
-			$tag = $this->envelope->getDeliveryTag();
-
-			if($queue->nack($tag, $options['flag'])) {
-				$this->envelope = null;
-				return true;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * Consume job(s) from the queue.
 	 *
 	 * @return .
@@ -370,6 +322,54 @@ class AMQP extends \lithium\core\Object {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Acknowledge a message has been processed.
+	 *
+	 * @return .
+	 */
+	public function ack($options = array()) {
+		$config = $this->_config;
+		$defaults = array(
+			'flag' => AMQP_NOPARAM
+		);
+		$options += $defaults;
+
+		if($this->envelope instanceof AMQPEnvelope) {
+			$queue = $this->queue();
+			$tag = $this->envelope->getDeliveryTag();
+
+			if($queue->ack($tag, $options['flag'])) {
+				$this->envelope = null;
+				return true;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Unacknowledge a message if it has failed to be processed.
+	 *
+	 * @return .
+	 */
+	public function nack($options = array()) {
+		$config = $this->_config;
+		$defaults = array(
+			'flag' => AMQP_REQUEUE
+		);
+		$options += $defaults;
+
+		if($this->envelope instanceof AMQPEnvelope) {
+			$queue = $this->queue();
+			$tag = $this->envelope->getDeliveryTag();
+
+			if($queue->nack($tag, $options['flag'])) {
+				$this->envelope = null;
+				return true;
+			}
+		}
+		return null;
 	}
 
 	/**
