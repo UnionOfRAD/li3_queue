@@ -92,16 +92,16 @@ Additional notes:
 
 3. Confirm or requeue a message
 
-    Once you've read a message from the queue you will either need to acknowledge it's success using:
+    Once you've read a message from the queue you will either need to confirm it's success using:
 
     ```php
-    Queue::ack('default');
+    Queue::confirm('default');
     ```
 
-    Or not acknowledge your message and requeue it using:
+    Or requeue your message using:
 
     ```php
-    Queue::nack('default');
+    Queue::requeue('default');
     ```
 
 4. Consume messages
