@@ -172,6 +172,24 @@ class AMQP extends \lithium\core\Object {
 	}
 
 	/**
+	 * Alias for ack().
+	 *
+	 * @return .
+	 */
+	public function confirm() {
+		return $this->ack();
+	}
+
+	/**
+	 * Alias for nack().
+	 *
+	 * @return .
+	 */
+	public function requeue() {
+		return $this->nack();
+	}
+
+	/**
 	 * Acknowledge a message has been processed.
 	 *
 	 * @return .
