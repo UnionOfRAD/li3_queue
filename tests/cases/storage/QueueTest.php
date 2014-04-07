@@ -13,16 +13,6 @@ class QueueTest extends \lithium\test\Unit {
 		));
 	}
 
-	public function testWriteNoConfig() {
-		$result = Queue::write('no-config', 'message');
-		$this->assertFalse($result);
-	}
-
-	public function testReadNoConfig() {
-		$result = Queue::read('no-config');
-		$this->assertFalse($result);
-	}
-
 	public function testWrite() {
 		$result = Queue::write('default', 'message');
 		$this->assertTrue($result);
@@ -34,6 +24,16 @@ class QueueTest extends \lithium\test\Unit {
 
 		$result = Queue::read('default');
 		$this->assertEqual('message', $result['data']);
+	}
+
+	public function testConfirm() {
+		$result = Queue::confirm('default');
+		$this->assertNull($result);
+	}
+
+	public function testRequeue() {
+		$result = Queue::requeue('default');
+		$this->assertNull($result);
 	}
 
 	public function testConsume() {
@@ -48,6 +48,23 @@ class QueueTest extends \lithium\test\Unit {
 			$this->assertEqual($expected, $message);
 			return true;
 		});
+	}
+
+	public function testNoConfig() {
+		$result = Queue::write('no-config', 'message');
+		$this->assertFalse($result);
+
+		$result = Queue::read('no-config');
+		$this->assertFalse($result);
+
+		$result = Queue::confirm('no-config');
+		$this->assertFalse($result);
+
+		$result = Queue::requeue('no-config');
+		$this->assertFalse($result);
+
+		$result = Queue::consume('no-config', function() {});
+		$this->assertFalse($result);
 	}
 
 	public function testAdd() {
