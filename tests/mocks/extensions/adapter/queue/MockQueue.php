@@ -21,6 +21,14 @@ class MockQueue extends \li3_queue\extensions\adapter\Queue {
 		return null;
 	}
 
+	public function confirm() {
+		return null;
+	}
+
+	public function requeue() {
+		return null;
+	}
+
 	public function consume($callback, array $options = array()) {
 		$queue = $this->_queue;
 
