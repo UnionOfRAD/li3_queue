@@ -45,43 +45,6 @@ class Queue extends \lithium\core\Adaptable {
 	}
 
 	/**
-	 * Reads from the specified queue configuration
-	 *
-	 * @param string $name Configuration to be used for reading
-	 * @param mixed $data Data to be queued
-	 * @param mixed $options Options for the method
-	 * @return boolean True on successful cache write, false otherwise
-	 */
-	public static function confirm($name) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
-		$method = static::adapter($name)->confirm();
-		return $method;
-	}
-
-	/**
-	 * Reads from the specified queue configuration
-	 *
-	 * @param string $name Configuration to be used for reading
-	 * @param mixed $options Options for the method
-	 * @return mixed Read results on successful queue read, null otherwise
-	 */
-	public static function requeue($name) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
-		$method = static::adapter($name)->requeue();
-		return $method;
-	}
-
-	/**
 	 * Consume from the specified queue configuration
 	 *
 	 * @param string $name Configuration to be used for consuming
