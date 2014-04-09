@@ -28,12 +28,6 @@ class Queue extends \lithium\core\Adaptable {
 	 * @return boolean True on successful cache write, false otherwise
 	 */
 	public static function write($name, $data, array $options = array()) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
 		$method = static::adapter($name)->write($data, $options);
 		return $method;
 	}
@@ -46,12 +40,6 @@ class Queue extends \lithium\core\Adaptable {
 	 * @return mixed Read results on successful queue read, null otherwise
 	 */
 	public static function read($name, array $options = array()) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
 		$method = static::adapter($name)->read($options);
 		return $method;
 	}
@@ -100,12 +88,6 @@ class Queue extends \lithium\core\Adaptable {
 	 * @return non returning
 	 */
 	public static function consume($name, $callback, array $options = array()) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
 		$method = static::adapter($name)->consume($callback, $options);
 		return $method;
 	}
@@ -117,12 +99,6 @@ class Queue extends \lithium\core\Adaptable {
 	 * @return non returning
 	 */
 	public static function purge($name) {
-		$settings = static::config();
-
-		if(!isset($settings[$name])) {
-			return false;
-		}
-
 		$method = static::adapter($name)->purge();
 		return $method;
 	}
