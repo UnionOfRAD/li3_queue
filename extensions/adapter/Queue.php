@@ -4,7 +4,22 @@ namespace li3_queue\extensions\adapter;
 
 abstract class Queue extends \lithium\core\Object {
 
+	/**
+	 * The list of object properties to be automatically assigned from configuration passed to
+	 * `__construct()`.
+	 *
+	 * @var array
+	 */
+	protected $_autoConfig = array('classes' => 'merge');
 
+	/**
+	 * Class dependencies.
+	 *
+	 * @var array
+	 */
+	protected $_classes = array(
+		'message' => 'li3_queue\storage\queue\Message'
+	);
 
 	/**
 	 * Stores a connection to a remote resource. Usually a queue connection (`resource` type).
