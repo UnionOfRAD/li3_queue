@@ -67,6 +67,17 @@ class Queue extends \lithium\core\Adaptable {
 	}
 
 	/**
+	 * Reads stats from the specified queue configuration.
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return non returning
+	 */
+	public static function stats($name) {
+		$method = static::adapter($name)->stats();
+		return $method;
+	}
+
+	/**
 	 * @param string $task task name to queue
 	 * @param array $options Extra options
 	 * @return mixed Returned value by adapter's add() method
