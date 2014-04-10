@@ -128,7 +128,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$params = array('data' => $data) + $options;
 
 		$message = $this->invokeMethod('_instance', array($class, $params));
-		return $this->publish($message);
+		return $this->_publish($message);
 	}
 
 	/**
@@ -138,7 +138,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 */
 	public function read(array $options = array()) {
 		$queue = &$this->queue;
-		$message = $this->get($options);
+		$message = $this->_get($options);
 
 		$defaults = array('class' => 'message');
 		$options += $defaults;
@@ -300,7 +300,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function get(array $options = array()) {
+	protected function _get(array $options = array()) {
 		$config = $this->_config;
 		$queue = $this->_queue();
 
@@ -317,7 +317,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function publish($message, array $options = array()) {
+	protected function _publish($message, array $options = array()) {
 		$config = $this->_config;
 		$defaults = array(
 			'flags' => AMQP_NOPARAM,
