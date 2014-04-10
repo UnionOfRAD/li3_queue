@@ -88,14 +88,14 @@ abstract class Queue extends \lithium\core\Object {
 	 *
 	 * @return boolean.
 	 */
-	abstract public function confirm($message);
+	abstract public function confirm($message, array $options = array());
 
 	/**
 	 * Method to requeue a failed message.
 	 *
 	 * @return boolean.
 	 */
-	abstract public function requeue($message);
+	abstract public function requeue($message, array $options = array());
 
 	/**
 	 * Blocking method to listen for messages.
