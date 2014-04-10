@@ -223,7 +223,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	protected function _channel() {
+	protected function &_channel() {
 		if($this->connection) {
 			if(!$this->channel) {
 				$this->channel = new AMQPChannel($this->connection);
@@ -238,7 +238,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	protected function _exchange($options = array()) {
+	protected function &_exchange($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
 			'type' => AMQP_EX_TYPE_DIRECT,
@@ -268,7 +268,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	protected function _queue($options = array()) {
+	protected function &_queue($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
 			'flags' => AMQP_DURABLE
