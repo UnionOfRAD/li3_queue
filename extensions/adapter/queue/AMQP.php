@@ -138,19 +138,19 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 */
 	public function read(array $options = array()) {
 		$queue = &$this->queue;
-		$envelope = $this->envelope($options);
+		$message = $this->get($options);
 
 		$defaults = array('class' => 'message');
 		$options += $defaults;
 
-		if($envelope) {
+		if($message) {
 			$class = $options['class'];
 			$params = array(
-				'id' => $envelope->getDeliveryTag(),
+				'id' => $message->getDeliveryTag(),
 				'queue' => $this,
-				'data' => $envelope->getBody(),
-				'priority' => $envelope->getPriority(),
-				'redelivery' => $envelope->isRedelivery()
+				'data' => $message->getBody(),
+				'priority' => $message->getPriority(),
+				'redelivery' => $message->isRedelivery()
 			);
 			$message = $this->invokeMethod('_instance', array($class, $params));
 			return $message;
@@ -159,21 +159,33 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	/**
-	 * Alias for ack().
+	 * Confirm message have been acknowledged.
 	 *
-	 * @return .
+	 * @return boolean.
 	 */
-	public function confirm($message) {
-		return $this->ack();
+	public function confirm($message, array $options = array()) {
+		$queue = $this->_queue();
+		$defaults = array(
+			'flag' => AMQP_NOPARAM
+		);
+		$options += $defaults;
+
+		return $queue->ack($message->id(), $options['flag']);
 	}
 
 	/**
-	 * Alias for nack().
+	 * Requeue message for further processing.
 	 *
-	 * @return .
+	 * @return boolean.
 	 */
-	public function requeue($message) {
-		return $this->nack();
+	public function requeue($message, array $options = array()) {
+		$queue = $this->_queue();
+		$defaults = array(
+			'flag' => AMQP_REQUEUE
+		);
+		$options += $defaults;
+
+		return $queue->nack($message->id(), $options['flag']);
 	}
 
 	/**
@@ -284,53 +296,27 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	/**
-	 * Acknowledge a message has been processed.
+	 * Get message from the queue.
 	 *
 	 * @return .
 	 */
-	public function ack($options = array()) {
+	public function get(array $options = array()) {
 		$config = $this->_config;
+		$queue = $this->_queue();
+
 		$defaults = array(
-			'flag' => AMQP_NOPARAM
+			'flag' => ($config['autoAck']) ? AMQP_AUTOACK : 0
 		);
-		$options += $defaults;
+		$options = $options + $defaults;
 
-		if($this->envelope instanceof AMQPEnvelope) {
-			$queue = $this->queue();
-			$tag = $this->envelope->getDeliveryTag();
-
-			if($queue->ack($tag, $options['flag'])) {
-				$this->envelope = null;
-				return true;
-			}
-		}
-		return null;
+		return $queue->get($options['flag']);
 	}
 
 	/**
-	 * Unacknowledge a message if it has failed to be processed.
+	 * Publish message to the queue.
 	 *
 	 * @return .
 	 */
-	public function nack($options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flag' => AMQP_REQUEUE
-		);
-		$options += $defaults;
-
-		if($this->envelope instanceof AMQPEnvelope) {
-			$queue = $this->queue();
-			$tag = $this->envelope->getDeliveryTag();
-
-			if($queue->nack($tag, $options['flag'])) {
-				$this->envelope = null;
-				return true;
-			}
-		}
-		return null;
-	}
-
 	public function publish($message, array $options = array()) {
 		$config = $this->_config;
 		$defaults = array(
