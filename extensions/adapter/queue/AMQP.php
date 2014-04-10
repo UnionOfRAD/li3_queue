@@ -138,22 +138,10 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 */
 	public function read(array $options = array()) {
 		$queue = &$this->queue;
-		$message = $this->_get($options);
+		$envelope = $this->_get($options);
 
-		$defaults = array('class' => 'message');
-		$options += $defaults;
-
-		if($message) {
-			$class = $options['class'];
-			$params = array(
-				'id' => $message->getDeliveryTag(),
-				'queue' => $this,
-				'data' => $message->getBody(),
-				'priority' => $message->getPriority(),
-				'redelivery' => $message->isRedelivery()
-			);
-			$message = $this->invokeMethod('_instance', array($class, $params));
-			return $message;
+		if($envelope) {
+			return $this->_message($envelope, $options);
 		}
 		return null;
 	}
@@ -355,6 +343,26 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		));
 
 		return $exchange->publish($message->data(), $routing_key, $options['flags'], $options['attributes']);
+	}
+
+	/**
+	 * Converts AMQPEnvelope into Message object.
+	 *
+	 * @return object.
+	 */
+	protected function _message($envelope, array $options = array()) {
+		$defaults = array('class' => 'message');
+		$options += $defaults;
+
+		$class = $options['class'];
+		$params = array(
+			'id' => $envelope->getDeliveryTag(),
+			'queue' => $this,
+			'data' => $envelope->getBody(),
+			'priority' => $envelope->getPriority(),
+			'redelivery' => $envelope->isRedelivery()
+		);
+		return $this->invokeMethod('_instance', array($class, $params));
 	}
 
 	/**
