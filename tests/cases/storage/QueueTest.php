@@ -41,7 +41,7 @@ class QueueTest extends \lithium\test\Unit {
 		Queue::write('default', 'message');
 
 		$result = Queue::purge('default');
-		$this->assertEqual(2, $result);
+		$this->assertTrue($result);
 	}
 
 }

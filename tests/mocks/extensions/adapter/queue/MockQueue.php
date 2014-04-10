@@ -80,11 +80,10 @@ class MockQueue extends \li3_queue\extensions\adapter\Queue {
 		$queue = &$this->_queue;
 		$unacked = &$this->_unacked;
 
-		$messages = count($queue);
 		$queue = array();
 		$unacked = array();
 
-		return $messages;
+		return true;
 	}
 
 	public function stats() {
