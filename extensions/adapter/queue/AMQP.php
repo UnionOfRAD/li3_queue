@@ -224,7 +224,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			}
 			return $this->channel;
 		}
-		return false;
 	}
 
 	/**
