@@ -114,9 +114,11 @@ class AMQPTest extends \lithium\test\Unit {
 		$message->confirm();
 	}
 
-	public function testNackWithoutMessage() {
-		$result = $this->amqp->nack();
-		$this->assertNull($result);
+	public function testReadWithEmptyQueue() {
+		$amqp = &$this->amqp;
+
+		$message = $amqp->read();
+		$this->assertNull($message);
 	}
 
 	public function testConsume() {
