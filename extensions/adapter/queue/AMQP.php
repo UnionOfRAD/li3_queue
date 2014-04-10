@@ -83,19 +83,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	/**
-	 * Handles the actual `AMQP` connection and server connection adding for the adapter
-	 * constructor.
-	 *
-	 * @return void
-	 */
-	protected function _init() {
-		parent::_init();
-		if($this->_config['autoConnect']) {
-			$this->connect();
-		}
-	}
-
-	/**
 	 * Connect to the queue.
 	 *
 	 * @return .
