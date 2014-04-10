@@ -40,13 +40,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	public $queue = null;
 
 	/**
-	 * `AMQPEnvelope` object instance used by this adapter.
-	 *
-	 * @var object
-	 */
-	public $envelope = null;
-
-	/**
 	 * Adds config values to the public properties when a new object is created.
 	 *
 	 * @param array $config Configuration options : default value
