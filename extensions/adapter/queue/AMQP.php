@@ -147,7 +147,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function confirm() {
+	public function confirm($message) {
 		return $this->ack();
 	}
 
@@ -156,7 +156,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function requeue() {
+	public function requeue($message) {
 		return $this->nack();
 	}
 
