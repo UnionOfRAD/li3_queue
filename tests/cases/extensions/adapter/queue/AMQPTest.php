@@ -44,22 +44,14 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertTrue(AMQP::enabled());
 	}
 
-	public function testInit() {
-		$amqp = new AMQP(array('host' => 'localhost'));
-		$this->assertInternalType('object', $amqp);
-
-		$expected = 'localhost';
-		$result = $amqp->_config['host'];
-		$this->assertEqual($expected, $result);
-
-		$this->amqp = new AMQP();
-	}
-
 	public function testConnect() {
-		$amqp = &$this->amqp;
+		$amqp = new AMQP();
+		$this->assertInternalType('object', $amqp);
 
 		$result = $amqp->connect();
 		$this->assertTrue($result);
+
+		$this->amqp = &$amqp;
 	}
 
 	public function testPurgeQueue() {
