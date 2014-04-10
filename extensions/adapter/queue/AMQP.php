@@ -283,22 +283,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		return false;
 	}
 
-	public function envelope(array $options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flag' => ($config['autoAck']) ? AMQP_AUTOACK : 0
-		);
-		$options = $options + $defaults;
-		$envelope = &$this->envelope;
-
-		if(!$envelope instanceof AMQPEnvelope) {
-			$queue = $this->queue();
-			$envelope = $queue->get($options['flag']);
-		}
-
-		return $envelope;
-	}
-
 	/**
 	 * Acknowledge a message has been processed.
 	 *
