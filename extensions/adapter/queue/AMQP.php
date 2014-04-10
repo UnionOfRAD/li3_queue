@@ -221,6 +221,16 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	/**
+	 * Purge queue.
+	 *
+	 * @return .
+	 */
+	public function purge() {
+		$queue = $this->_queue();
+		return $queue->purge();
+	}
+
+	/**
 	 * Initialize AMQPChannel.
 	 *
 	 * @return .
@@ -345,16 +355,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		));
 
 		return $exchange->publish($message->data(), $routing_key, $options['flags'], $options['attributes']);
-	}
-
-	/**
-	 * Purge queue.
-	 *
-	 * @return .
-	 */
-	public function purge() {
-		$queue = $this->_queue();
-		return $queue->purge();
 	}
 
 	/**
