@@ -183,23 +183,21 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 */
 	public function consume($callback, array $options = array()) {
 		$config = $this->_config;
+		$queue = $this->_queue();
+
 		$defaults = array(
 			'flag' => AMQP_NOPARAM,
 			'return' => false
 		);
 		$options += $defaults;
 
-		$this->nack();
-		$queue = $this->_queue();
-
 		return $queue->consume(function($envelope, $queue) use ($callback, &$options) {
-			$this->envelope = &$envelope;
-			$message = $this->envelope();
+			$message = $this->_message($envelope);
 
 			if($result = $callback($message)) {
-				$this->ack();
+				$message->confirm();
 			} else {
-				$this->nack();
+				$message->requeue();
 			}
 
 			if($options['return']) {
