@@ -95,13 +95,13 @@ Additional notes:
     Once you've read a message from the queue you will either need to confirm it's success using:
 
     ```php
-    Queue::confirm('default');
+    $message->confirm();
     ```
 
     Or requeue your message using:
 
     ```php
-    Queue::requeue('default');
+    $message->requeue();
     ```
 
 4. Consume messages
