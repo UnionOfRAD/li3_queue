@@ -122,6 +122,30 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
 	/* Queue Protocol */
 
+	public function write($data, array $options = array()) {
+		return $this->put($data, $options);
+	}
+
+	public function read(array $options = array()) {
+
+	}
+
+	public function confirm($message, array $options = array()) {
+
+	}
+
+	public function requeue($message, array $options = array()) {
+
+	}
+
+	public function consume($callback, array $options = array()) {
+
+	}
+
+	public function purge() {
+
+	}
+
 	public function add($task, array $options = array()) {
 		return $this->put($task, $options);
 	}
