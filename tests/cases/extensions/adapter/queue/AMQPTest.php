@@ -44,6 +44,12 @@ class AMQPTest extends \lithium\test\Unit {
 		$this->assertTrue(AMQP::enabled());
 	}
 
+	public function testConnectFailed() {
+		$this->assertException('Socket error: could not connect to host.', function() {
+			$amqp = new AMQP(array('port' => 1));
+		});
+	}
+
 	public function testConnect() {
 		$amqp = new AMQP($this->_testConfig);
 		$this->assertInternalType('object', $amqp);

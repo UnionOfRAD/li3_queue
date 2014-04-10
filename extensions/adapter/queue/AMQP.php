@@ -7,7 +7,6 @@ use AMQPChannel;
 use AMQPExchange;
 use AMQPQueue;
 use AMQPEnvelope;
-use lithium\core\NetworkException;
 
 class AMQP extends \li3_queue\extensions\adapter\Queue {
 
@@ -84,12 +83,9 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	public function connect() {
 		if(!$this->connection) {
 			$this->connection = new AMQPConnection($this->_config);
-			try {
-				if($this->connection->connect()) {
-					$this->_isConnected = true;
-				}
-			} catch (AMQPConnectionException $e) {
-				throw new NetworkException("Could not connect to AMQP server.", 503, $e);
+
+			if($this->connection->connect()) {
+				$this->_isConnected = true;
 			}
 		}
 		return $this->isConnected();
