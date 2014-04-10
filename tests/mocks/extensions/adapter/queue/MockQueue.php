@@ -47,14 +47,14 @@ class MockQueue extends \li3_queue\extensions\adapter\Queue {
 		return null;
 	}
 
-	public function confirm($message) {
+	public function confirm($message, array $options = array()) {
 		$unacked = &$this->_unacked;
 		unset($unacked[$message->id()]);
 
 		return true;
 	}
 
-	public function requeue($message) {
+	public function requeue($message, array $options = array()) {
 		$queue = &$this->_queue;
 		$unacked = &$this->_unacked;
 		$message = $unacked[$message->id()];
