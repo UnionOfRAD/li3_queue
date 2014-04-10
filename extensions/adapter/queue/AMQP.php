@@ -8,7 +8,7 @@ use AMQPExchange;
 use AMQPQueue;
 use AMQPEnvelope;
 
-class AMQP extends \lithium\core\Object {
+class AMQP extends \li3_queue\extensions\adapter\Queue {
 
 	/**
 	 * `AMQPConnection` object instance used by this adapter.
