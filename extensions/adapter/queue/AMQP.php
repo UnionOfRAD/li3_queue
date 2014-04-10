@@ -119,32 +119,16 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 * @return .
 	 */
 	public function write($data, array $options = array()) {
-		$config = $this->_config;
-		$defaults = array(
-			'flags' => AMQP_NOPARAM,
-			'attributes' => array(
-				'content_type' => 'text/plain',
-				'content_encoding' => null,
-				'message_id' => null,
-				'user_id' => null,
-				'app_id' => null,
-				'delivery_mode' => 2,
-				'priority' => null,
-				'timestamp' => null,
-				'expiration' => null,
-				'type' => null,
-				'reply_to' => null,
-			)
-		);
+		$config = &$this->_config;
+
+		$defaults = array('class' => 'message');
 		$options += $defaults;
 
-		$routing_key = $config['routingKey'] ?: $config['queue'];
+		$class = $options['class'];
+		$params = array('data' => $data) + $options;
 
-		$exchange = $this->exchange(array(
-			'queue' => $config['queue'],
-			'routingKey' => $config['routingKey']
-		));
-		return $exchange->publish($data, $routing_key, $options['flags'], $options['attributes']);
+		$message = $this->invokeMethod('_instance', array($class, $params));
+		return $this->publish($message);
 	}
 
 	/**
@@ -357,6 +341,36 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			}
 		}
 		return null;
+	}
+
+	public function publish($message, array $options = array()) {
+		$config = $this->_config;
+		$defaults = array(
+			'flags' => AMQP_NOPARAM,
+			'attributes' => array(
+				'content_type' => $message->contentType(),
+				'content_encoding' => null,
+				'message_id' => null,
+				'user_id' => null,
+				'app_id' => null,
+				'delivery_mode' => 2,
+				'priority' => $message->priority(),
+				'timestamp' => null,
+				'expiration' => null,
+				'type' => null,
+				'reply_to' => null,
+			)
+		);
+		$options += $defaults;
+
+		$routing_key = $config['routingKey'] ?: $config['queue'];
+
+		$exchange = $this->exchange(array(
+			'queue' => $config['queue'],
+			'routingKey' => $config['routingKey']
+		));
+
+		return $exchange->publish($message->data(), $routing_key, $options['flags'], $options['attributes']);
 	}
 
 	/**
