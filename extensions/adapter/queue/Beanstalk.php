@@ -43,13 +43,6 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 		parent::__construct($config + $defaults);
 	}
 
-	protected function _init() {
-		parent::_init();
-		if ($this->_config['autoConnect']) {
-			$this->connect();
-		}
-	}
-
 	/* Connection Protocol */
 
 	/**
