@@ -137,9 +137,25 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 * @return .
 	 */
 	public function read(array $options = array()) {
-		$this->nack();
-		$message = $this->envelope($options);
-		return $message;
+		$queue = &$this->queue;
+		$envelope = $this->envelope($options);
+
+		$defaults = array('class' => 'message');
+		$options += $defaults;
+
+		if($envelope) {
+			$class = $options['class'];
+			$params = array(
+				'id' => $envelope->getDeliveryTag(),
+				'queue' => $this,
+				'data' => $envelope->getBody(),
+				'priority' => $envelope->getPriority(),
+				'redelivery' => $envelope->isRedelivery()
+			);
+			$message = $this->invokeMethod('_instance', array($class, $params));
+			return $message;
+		}
+		return null;
 	}
 
 	/**
