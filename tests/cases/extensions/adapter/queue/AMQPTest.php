@@ -83,15 +83,14 @@ class AMQPTest extends \lithium\test\Unit {
 	public function testReadWithConfirm() {
 		$amqp = &$this->amqp;
 
-		$expected = array(
-			'body' => 'message',
-			'isRedelivery' => false
-		);
+		$expected = 'message';
 
-		$result = $amqp->read();
-		$this->assertEqual($expected, $result);
+		$message = $amqp->read();
 
-		$result = $amqp->confirm();
+		$this->assertInternalType('object', $message);
+		$this->assertEqual($expected, $message->data());
+
+		$result = $message->confirm();
 		$this->assertTrue($result);
 	}
 
@@ -99,9 +98,9 @@ class AMQPTest extends \lithium\test\Unit {
 		$amqp = &$this->amqp;
 
 		$amqp->write('message');
-		$amqp->read();
+		$message = $amqp->read();
 
-		$result = $amqp->requeue();
+		$result = $message->requeue();
 		$this->assertTrue($result);
 	}
 
