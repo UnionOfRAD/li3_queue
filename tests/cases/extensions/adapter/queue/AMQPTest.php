@@ -56,14 +56,14 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testConnect() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$result = $amqp->connect();
 		$this->assertTrue($result);
 	}
 
 	public function testPurgeQueue() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		for($x=0; $x<10; $x++) {
 			$amqp->write('message_'.$x);
@@ -74,14 +74,14 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testWrite() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$result = $amqp->write('message');
 		$this->assertTrue($result);
 	}
 
 	public function testReadWithConfirm() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$expected = array(
 			'body' => 'message',
@@ -96,7 +96,7 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testReadWithRequeue() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$amqp->write('message');
 		$amqp->read();
@@ -106,7 +106,7 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testReadRedelivery() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$result = $amqp->read();
 		$expected = array(
@@ -129,7 +129,7 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testConsume() {
-		$amqp = $this->amqp;
+		$amqp = &$this->amqp;
 
 		$amqp->write('message');
 
