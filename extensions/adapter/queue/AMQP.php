@@ -397,15 +397,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		return extension_loaded('amqp');
 	}
 
-	/**
-	 * Destructor.
-	 *
-	 * @return void
-	 */
-	public function __destruct() {
-		$this->disconnect();
-	}
-
 }
 
 ?>
