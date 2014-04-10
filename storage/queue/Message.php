@@ -20,19 +20,23 @@ class Message extends \lithium\core\Object {
 
 	protected $_expiration = null;
 
+	protected $_redelivery = false;
+
 	protected $_autoConfig = array(
 		'id',
 		'queue',
 		'data',
-		'priority'
+		'priority',
+		'redelivery'
 	);
 
 	public function __construct(array $config = array()) {
 		$defaults = array(
-			'id' => sha1(uniqid('JvKnrQWPsThuJteNQAuH' . mt_rand(), true)),
+			'id' => null,
 			'queue' => null,
 			'data' => '',
-			'priority' => 0
+			'priority' => 0,
+			'redelivery' => false
 		);
 
 		$this->id(sha1(uniqid('JvKnrQWPsThuJteNQAuH' . mt_rand(), true)));
@@ -68,6 +72,10 @@ class Message extends \lithium\core\Object {
 
 	public function expiration() {
 		return $this->_expiration;
+	}
+
+	public function isRedelivery() {
+		return $this->_redelivery;
 	}
 
 	public function confirm() {
