@@ -190,7 +190,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$options += $defaults;
 
 		$this->nack();
-		$queue = $this->queue();
+		$queue = $this->_queue();
 
 		return $queue->consume(function($envelope, $queue) use ($callback, &$options) {
 			$this->envelope = &$envelope;
@@ -213,7 +213,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function channel() {
+	protected function _channel() {
 		if($this->connection) {
 			if(!$this->channel) {
 				$this->channel = new AMQPChannel($this->connection);
@@ -228,14 +228,14 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function exchange($options = array()) {
+	protected function _exchange($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
 			'type' => AMQP_EX_TYPE_DIRECT,
 			'flags' => AMQP_DURABLE
 		);
 		$options = $options + $defaults;
-		$channel = $this->channel();
+		$channel = $this->_channel();
 
 		if($channel) {
 			$exchange = $this->exchange;
@@ -247,7 +247,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				$exchange->declareExchange();
 				$this->exchange = $exchange;
 			}
-			$this->queue();
+			$this->_queue();
 			return $exchange;
 		}
 		return false;
@@ -258,13 +258,13 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *
 	 * @return .
 	 */
-	public function queue($options = array()) {
+	protected function _queue($options = array()) {
 		$config = $this->_config;
 		$defaults = array(
 			'flags' => AMQP_DURABLE
 		);
 		$options = $options + $defaults;
-		$channel = $this->channel();
+		$channel = $this->_channel();
 
 		if($channel) {
 			$queue = $this->queue;
@@ -369,7 +369,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 
 		$routing_key = $config['routingKey'] ?: $config['queue'];
 
-		$exchange = $this->exchange(array(
+		$exchange = $this->_exchange(array(
 			'queue' => $config['queue'],
 			'routingKey' => $config['routingKey']
 		));
@@ -383,7 +383,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 * @return .
 	 */
 	public function purge() {
-		$queue = $this->queue();
+		$queue = $this->_queue();
 		return $queue->purge();
 	}
 
