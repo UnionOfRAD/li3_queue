@@ -107,19 +107,11 @@ class AMQPTest extends \lithium\test\Unit {
 	public function testReadRedelivery() {
 		$amqp = &$this->amqp;
 
-		$result = $amqp->read();
-		$expected = array(
-			'body' => 'message',
-			'isRedelivery' => true
-		);
-		$this->assertEqual($expected, $result);
+		$message = $amqp->read();
 
-		$amqp->confirm();
-	}
+		$this->assertTrue($message->isRedelivery());
 
-	public function testAckWithoutMessage() {
-		$result = $this->amqp->ack();
-		$this->assertNull($result);
+		$message->confirm();
 	}
 
 	public function testNackWithoutMessage() {
