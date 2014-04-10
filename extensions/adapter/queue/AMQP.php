@@ -273,26 +273,14 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'flag' => ($config['autoAck']) ? AMQP_AUTOACK : 0
 		);
 		$options = $options + $defaults;
-		$envelope = $this->envelope;
+		$envelope = &$this->envelope;
 
 		if(!$envelope instanceof AMQPEnvelope) {
 			$queue = $this->queue();
 			$envelope = $queue->get($options['flag']);
 		}
 
-		if($envelope instanceof AMQPEnvelope) {
-			$message = array(
-				'body' => $envelope->getBody(),
-				'isRedelivery' => $envelope->isRedelivery()?:false
-			);
-
-			if($options['flag'] != AMQP_AUTOACK) {
-				$this->envelope = $envelope;
-			}
-			return $message;
-		}
-
-		return false;
+		return $envelope;
 	}
 
 	/**
