@@ -45,7 +45,7 @@ class AMQPTest extends \lithium\test\Unit {
 	}
 
 	public function testConnect() {
-		$amqp = new AMQP();
+		$amqp = new AMQP($this->_testConfig);
 		$this->assertInternalType('object', $amqp);
 
 		$result = $amqp->connect();
