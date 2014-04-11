@@ -269,6 +269,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$options = $options + $defaults;
 		$channel = $this->_channel();
 
+		$routing_key = $config['routingKey'] ?: $config['queue'];
+
 		if($channel) {
 			$queue = $this->queue;
 			if(!$queue instanceof AMQPQueue) {
@@ -276,8 +278,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				$queue->setName($config['queue']);
 				$queue->setFlags($options['flags']);
 				$queue->declareQueue();
-				if($config['exchange'] && $config['routingKey']) {
-					$queue->bind($config['exchange'], $config['routingKey']);
+				if($config['exchange'] && $routing_key) {
+					$queue->bind($config['exchange'], $routing_key);
 				}
 				$this->queue = $queue;
 			}
