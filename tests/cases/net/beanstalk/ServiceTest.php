@@ -6,17 +6,69 @@ use li3_queue\net\beanstalk\Service;
 
 class ServiceTest extends \lithium\test\Unit {
 
-	public function testInit() {
+	public $service = null;
+
+	public function testConnection() {
 		$service = new Service();
-		$conn = $service->connect();
+		$result = $service->connect();
+		$this->assertTrue($result);
 
-		$result = $service->choose();
-		var_dump($result);
+		$this->service = &$service;
+	}
 
-		$result = $service->put("message");
-		var_dump($result);
+	public function testChoose() {
+		$service = &$this->service;
 
-		//$result = $service->reserve();
+		$result = $service->choose('default');
+		$this->assertEqual('USING', $result->status);
+	}
+
+	public function testReserveTimedOut() {
+		$service = &$this->service;
+
+		$result = $service->reserve(0);
+		$this->assertEqual('TIMED_OUT', $result->status);
+	}
+
+	public function testPut() {
+		$service = &$this->service;
+
+		$result = $service->put('message');
+		$this->assertEqual('INSERTED', $result->status);
+	}
+
+	public function testReserveAndRelease() {
+		$service = &$this->service;
+
+		$result = $service->reserve(0);
+		$this->assertEqual('RESERVED', $result->status);
+
+		$result = $service->release($result->id);
+		$this->assertEqual('RELEASED', $result->status);
+	}
+
+	public function testReserveAndDelete() {
+		$service = &$this->service;
+
+		$result = $service->reserve(0);
+		$this->assertEqual('RESERVED', $result->status);
+
+		$result = $service->delete($result->id);
+		$this->assertEqual('DELETED', $result->status);
+	}
+
+	public function testListTubes() {
+		$service = &$this->service;
+
+		$result = $service->listTubes();
+		$this->assertEqual('OK', $result->status);
+	}
+
+	public function testStats() {
+		$service = &$this->service;
+
+		$result = $service->stats();
+		$this->assertEqual('OK', $result->status);
 	}
 
 }
