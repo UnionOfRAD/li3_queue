@@ -16,10 +16,9 @@ use li3_queue\extensions\adapter\net\socket\Beanstalk as BeanstalkSocket;
 class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
 	/**
-	 * Stores a connection to a remote resource. Usually a database connection (`resource` type),
-	 * or an HTTP connection object ('object' type).
+	 * The `Socket` instance used to send `Service` calls.
 	 *
-	 * @var mixed
+	 * @var lithium\net\Socket
 	 */
 	public $connection = null;
 
@@ -31,14 +30,31 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 */
 	protected $_isConnected = false;
 
+	protected $_classes = array(
+		'service' => '\li3_queue\net\beanstalk\Service'
+	);
+
+	/**
+	 * Adds config values to the public properties when a new object is created.
+	 *
+	 * @param array $config Configuration options : default value
+	 *        - `'host'` _string_: '127.0.0.1'
+	 *        - `'port'` _interger_: 11300
+	 *        - `'timeout'` _interger_: 60
+	 *        - `'tube'` _string_: 'default'
+	 *        - `'kickBound'` _interger_: 100
+	 *        - `'persistent'` _boolean_: true
+	 *        - `'autoConnect'` _boolean_: true
+	 */
 	public function __construct(array $config = array()) {
 		$defaults = array(
-			'autoConnect'	=> true,
-			'persistent'	=> true,
-			'format'		=> 'php',
-			'kickBound'		=> 100,
-			'host'			=> BeanstalkSocket::DEFAULT_HOST . ':' . BeanstalkSocket::DEFAULT_PORT,
-			'timeout'		=> 60
+			'host' => '127.0.0.1',
+			'port' => 11300,
+			'timeout' => 60,
+			'tube' => 'default',
+			'kickBound' => 100,
+			'persistent' => true,
+			'autoConnect' => true
 		);
 		parent::__construct($config + $defaults);
 	}
