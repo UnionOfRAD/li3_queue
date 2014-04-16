@@ -55,7 +55,7 @@ class Service extends \lithium\core\Object {
 	}
 
 	public function connect() {
-		$config = &$this->_config;
+		$config = $this->_config;
 
 		if(!$this->_isConnected) {
 			if($this->connection->open($config)) {
@@ -75,7 +75,7 @@ class Service extends \lithium\core\Object {
 
 	public function reserve($timeout = null) {
 		if(!is_null($timeout)) {
-			$response = $this->send('reserve-with-timeout', null, array('timeout' => $timeout));
+			$response = $this->send('reserve-with-timeout', array('timeout' => $timeout));
 		} else {
 			$response = $this->send('reserve');
 		}
@@ -101,7 +101,6 @@ class Service extends \lithium\core\Object {
 	public function send($method, $data = null, array $options = array()) {
 		$config = array('method' => $method, 'data' => $data, 'options' => $options);
 		$request = $this->_instance('request', $config);
-		var_dump($request);
 		$response = $this->connection->send($request);
 		return $response;
 	}
