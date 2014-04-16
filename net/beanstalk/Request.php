@@ -57,7 +57,7 @@ class Request extends \lithium\core\Object {
 			'reserve' => function($data, $options) {
 				return 'reserve';
 			},
-			'reserve-with-timeout' => function($data, $options) {
+			'reserve-with-timeout' => function($options) {
 				$defaults = array(
 					'timeout' => 0
 				);
