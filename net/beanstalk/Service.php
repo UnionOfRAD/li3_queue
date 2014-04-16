@@ -21,6 +21,11 @@ class Service extends \lithium\core\Object {
 	 */
 	protected $_isConnected = false;
 
+	protected $_classes = array(
+		'request' => '\li3_queue\net\beanstalk\Request',
+		'response' => '\li3_queue\net\beanstalk\Response'
+	);
+
 	/**
 	 * Initializes a new `Service` instance.
 	 *
@@ -32,15 +37,15 @@ class Service extends \lithium\core\Object {
 			'scheme' => 'tcp',
 			'host' => 'localhost',
 			'port' => 11300,
-			'timeout' => 5,
-			'socket' => 'Stream',
-			'eol' => "\r\n"
+			'timeout' => 30,
+			'autoConnect' => true,
+			'socket' => 'Stream'
 		);
 		parent::__construct($config + $defaults);
 	}
 
 	protected function _init() {
-		$config = &$this->_config;
+		$config = array('classes' => $this->_classes) + $this->_config;
 
 		try {
 			$this->connection = Libraries::instance('socket', $config['socket'], $config);
@@ -60,51 +65,45 @@ class Service extends \lithium\core\Object {
 		return $this->_isConnected;
 	}
 
-	public function choose($tube = 'default') {
-		$response = $this->write(sprintf('use %s', $tube));
+	public function choose($tube) {
+		return $this->send('use', $tube);
+	}
 
-		switch ($response[0]) {
-			case 'USING':
-				return true;
-			default:
-				return false;
+	public function put($data, $options = array()) {
+		return $this->send('put', $data, $options);
+	}
+
+	public function reserve($timeout = null) {
+		if(!is_null($timeout)) {
+			$response = $this->send('reserve-with-timeout', null, array('timeout' => $timeout));
+		} else {
+			$response = $this->send('reserve');
 		}
+		return $response;
 	}
 
-	public function put($data, $priority = 0, $delay = 0, $ttr = 0) {
-		$this->write(sprintf('put %d %d %d %d', $priority, $delay, $ttr, strlen($data)));
-		$this->write($data);
-
-		$status = strtok($this->read(), ' ');
-		var_dump($stats);
-exit;
-		switch ($response[0]) {
-			case 'INSERTED':
-			case 'BURIED':
-				return (integer) $response[1];
-			case 'EXPECTED_CRLF':
-			case 'JOB_TOO_BIG':
-			default:
-				return false;
-		}
+	public function release($id, array $options = array()) {
+		return $this->send('release', $id, $options);
 	}
 
-	public function reserve() {
-		$cmd = 'reserve';
-		$response = $this->write($cmd);
-
-		//$result = $this->write(sprintf('delete %d', $result));
-		//$result = $this->read();
-		//var_dump($result);
+	public function delete($id) {
+		return $this->send('delete', $id);
 	}
 
-	public function write($data, $ending = "\r\n") {
-		return $this->connection->write(array('body' => $data . $ending));
+	public function listTubes() {
+		return $this->send('list-tubes');
 	}
 
-	public function read($length = 16384, $ending = "\r\n") {
-		$resource = $this->connection->resource();
-		return stream_get_line($resource, $length, $ending);
+	public function stats() {
+		return $this->send('stats');
+	}
+
+	public function send($method, $data = null, array $options = array()) {
+		$config = array('method' => $method, 'data' => $data, 'options' => $options);
+		$request = $this->_instance('request', $config);
+		var_dump($request);
+		$response = $this->connection->send($request);
+		return $response;
 	}
 
 }
