@@ -20,7 +20,7 @@ class Response extends \lithium\core\Object {
 		'/(?<status>INSERTED)\s(?<id>\d+)/',
 		'/(?<status>BURIED)\s(?<id>\d+)/',
 		'/(?<status>EXPECTED_CRLF)/',
-		'/(?<status>JOB_TO_BIG)/',
+		'/(?<status>JOB_TOO_BIG)/',
 		'/(?<status>DRAINING)/',
 		'/(?<status>USING)\s(?<tube>.+)/',
 		'/(?<status>DEADLINE_SOON)/',
