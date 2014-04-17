@@ -156,8 +156,7 @@ class Service extends \lithium\core\Object {
 	public function send($method, $data = null, array $options = array()) {
 		$config = array('method' => $method, 'data' => $data, 'options' => $options);
 		$request = $this->_instance('request', $config);
-		$response = $this->connection->send($request);
-		return $response;
+		return $this->connection->send($request);
 	}
 
 }
