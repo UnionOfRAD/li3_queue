@@ -33,7 +33,7 @@ class ServiceTest extends \lithium\test\Unit {
 	public function testPut() {
 		$service = &$this->service;
 
-		$result = $service->put('message');
+		$result = $service->put('message', 0, 0, 0);
 		$this->assertEqual('INSERTED', $result->status);
 	}
 
@@ -43,7 +43,7 @@ class ServiceTest extends \lithium\test\Unit {
 		$result = $service->reserve(0);
 		$this->assertEqual('RESERVED', $result->status);
 
-		$result = $service->release($result->id);
+		$result = $service->release($result->id, 0, 0);
 		$this->assertEqual('RELEASED', $result->status);
 	}
 
