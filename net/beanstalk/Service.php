@@ -69,33 +69,88 @@ class Service extends \lithium\core\Object {
 		return $this->send('use', $tube);
 	}
 
-	public function put($data, $options = array()) {
+	public function put($data, $pri, $delay, $ttr) {
+		$options = array('pri' => $pri, 'delay' => $delay, 'ttr' => $ttr);
 		return $this->send('put', $data, $options);
 	}
 
 	public function reserve($timeout = null) {
 		if(!is_null($timeout)) {
-			$response = $this->send('reserve-with-timeout', array('timeout' => $timeout));
+			$options = array('timeout' => $timeout);
+			$response = $this->send('reserve-with-timeout', null, $options);
 		} else {
 			$response = $this->send('reserve');
 		}
 		return $response;
 	}
 
-	public function release($id, array $options = array()) {
+	public function delete($id) {
+		return $this->send('delete', $id);
+	}
+
+	public function release($id, $pri, $delay) {
+		$options = array('pri' => $pri, 'delay' => $delay);
 		return $this->send('release', $id, $options);
 	}
 
-	public function delete($id) {
-		return $this->send('delete', $id);
+	public function bury($id, $pri) {
+		$options = array('pri' => $pri);
+		return $this->send('bury', $id, $options);
+	}
+
+	public function touch($id) {
+		return $this->send('touch', $id);
+	}
+
+	public function watch($tube) {
+		return $this->send('watch', $tube);
+	}
+
+	public function ignore($tube) {
+		return $this->send('ignore', $tube);
+	}
+
+	public function peek($type) {
+		if(in_array($type, array('ready', 'delayed', 'buried'))) {
+			return $this->send('peek-' . $type);
+		}
+		return $this->send('peek', $type);
+	}
+
+	public function kick($bound, $id = null) {
+		if(in_array($bound, array('job'))) {
+			return $this->send('kick-' . $bound, $id);
+		}
+		return $this->send('kick', $bound);
+	}
+
+	public function statsJob($id) {
+		return $this->send('stats-job', $id);
+	}
+
+	public function statsTube($tube) {
+		return $this->send('stats-tube', $tube);
+	}
+
+	public function stats() {
+		return $this->send('stats');
 	}
 
 	public function listTubes() {
 		return $this->send('list-tubes');
 	}
 
-	public function stats() {
-		return $this->send('stats');
+	public function listTubeUsed() {
+		return $this->send('list-tube-used');
+	}
+
+	public function listTubesWatched() {
+		return $this->send('list-tubes-watched');
+	}
+
+	public function pauseTube($tube, $delay) {
+		$options = array('delay' => $delay);
+		return $this->send('pause-tube', $tube, $options);
 	}
 
 	public function send($method, $data = null, array $options = array()) {
