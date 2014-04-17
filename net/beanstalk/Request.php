@@ -37,8 +37,8 @@ class Request extends \lithium\core\Object {
 		);
 
 		$this->_requestTypes = array(
-			'use' => function($data, $options) {
-				return sprintf('use %s', $data);
+			'use' => function($tube, $options) {
+				return sprintf('use %s', $tube);
 			},
 			'put' => function($data, $options) {
 				$defaults = array(
@@ -57,7 +57,7 @@ class Request extends \lithium\core\Object {
 			'reserve' => function($data, $options) {
 				return 'reserve';
 			},
-			'reserve-with-timeout' => function($options) {
+			'reserve-with-timeout' => function($data, $options) {
 				$defaults = array(
 					'timeout' => 0
 				);
@@ -79,10 +79,10 @@ class Request extends \lithium\core\Object {
 			'delete' => function($id, $options) {
 				return sprintf('delete %d', $id);
 			},
-			'list-tubes' => function() {
+			'list-tubes' => function($data, $options) {
 				return 'list-tubes';
 			},
-			'stats' => function() {
+			'stats' => function($data, $options) {
 				return 'stats';
 			}
 		);
