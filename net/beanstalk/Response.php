@@ -32,9 +32,11 @@ class Response extends \lithium\core\Object {
 		'/(?<status>TOUCHED)/',
 		'/(?<status>WATCHING)\s(?<count>\d+)/',
 		'/(?<status>NOT_IGNORED)/',
+		'/(?<status>FOUND)\s(?<id>\d+)\s(?<bytes>\d+)\r\n(?<data>.*)/s',
 		'/(?<status>KICKED)\s(?<count>\d+)/',
 		'/(?<status>KICKED)/',
 		'/(?<status>OK)\s(?<bytes>\d+)\r\n(?<data>.*)/s',
+		'/(?<status>PAUSED)/'
 	);
 
 	public function __construct(array $config = array()) {
