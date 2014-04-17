@@ -100,6 +100,15 @@ class Request extends \lithium\core\Object {
 			},
 			'list-tubes' => function($data, array $options = array()) {
 				return 'list-tubes';
+			},
+			'list-tube-used' => function($data, array $options = array()) {
+				return 'list-tube-used';
+			},
+			'list-tubes-watched' => function($data, array $options = array()) {
+				return 'list-tubes-watched';
+			},
+			'pause-tube' => function($data, array $options = array()) {
+				return 'pause-tube';
 			}
 		);
 
