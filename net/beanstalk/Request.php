@@ -41,49 +41,65 @@ class Request extends \lithium\core\Object {
 				return sprintf('use %s', $tube);
 			},
 			'put' => function($data, $options) {
-				$defaults = array(
-					'pri' => 0,
-					'delay' => 0,
-					'ttl' => 0
-				);
-				$options += $defaults;
-				extract($options, EXTR_SKIP);
-
-				$bytes = strlen($data);
-
-				$command = sprintf('put %d %d %d %d', $pri, $delay, $ttl, $bytes);
-				return join("\r\n", array($command, $data));
+				extract($options, EXTR_OVERWRITE);
+				$cmd = sprintf('put %d %d %d %d', $pri, $delay, $ttr, strlen($data));
+				return join("\r\n", array($cmd, $data));
 			},
-			'reserve' => function($data, $options) {
+			'reserve' => function($data, array $options = array()) {
 				return 'reserve';
 			},
-			'reserve-with-timeout' => function($data, $options) {
-				$defaults = array(
-					'timeout' => 0
-				);
-				$options += $defaults;
-				extract($options, EXTR_SKIP);
-
+			'reserve-with-timeout' => function($data, array $options = array()) {
+				extract($options, EXTR_OVERWRITE);
 				return sprintf('reserve-with-timeout %d', $timeout);
 			},
-			'release' => function($id, $options) {
-				$defaults = array(
-					'pri' => 0,
-					'delay' => 0
-				);
-				$options += $defaults;
-				extract($options, EXTR_SKIP);
-
+			'release' => function($id, array $options = array()) {
+				extract($options, EXTR_OVERWRITE);
 				return sprintf('release %d %d %d', $id, $pri, $delay);
 			},
-			'delete' => function($id, $options) {
+			'delete' => function($id, array $options = array()) {
 				return sprintf('delete %d', $id);
 			},
-			'list-tubes' => function($data, $options) {
-				return 'list-tubes';
+			'bury' => function($id, array $options = array()) {
+				return sprintf('delete %d %d', $id, $pri);
 			},
-			'stats' => function($data, $options) {
+			'touch' => function($id, array $options = array()) {
+				return sprintf('touch %d', $id);
+			},
+			'watch' => function($tube, array $options = array()) {
+				return sprintf('watch %s', $tube);
+			},
+			'ignore' => function($tube, array $options = array()) {
+				return sprintf('ignore %s', $tube);
+			},
+			'peek' => function($id, array $options = array()) {
+				return sprintf('peek %d', $id);
+			},
+			'peek-ready' => function($data, array $options = array()) {
+				return sprintf('peek-ready');
+			},
+			'peek-delayed' => function($data, array $options = array()) {
+				return sprintf('peek-delayed');
+			},
+			'peek-buried' => function($data, array $options = array()) {
+				return sprintf('peek-buried');
+			},
+			'kick' => function($bound, array $options = array()) {
+				return sprintf('kick %d', $bound);
+			},
+			'kick-job' => function($id, array $options = array()) {
+				return sprintf('kick-job %d', $id);
+			},
+			'stats-job' => function($id, array $options = array()) {
+				return sprintf('stats-job %d', $id);
+			},
+			'stats-tube' => function($tube, array $options = array()) {
+				return sprintf('stats-tube %s', $tube);
+			},
+			'stats' => function($data, array $options = array()) {
 				return 'stats';
+			},
+			'list-tubes' => function($data, array $options = array()) {
+				return 'list-tubes';
 			}
 		);
 
