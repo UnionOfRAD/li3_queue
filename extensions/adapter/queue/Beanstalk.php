@@ -155,6 +155,14 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	public function purge() {
+		do {
+			$response = $this->connection->reserve(0);
+			if($response->id) {
+				$this->connection->delete($response->id);
+			}
+		} while ($response->status == 'RESERVED');
+
+		return true;
 	}
 
 	protected function _message($response, array $options = array()) {
