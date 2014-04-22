@@ -8,61 +8,76 @@
 
 namespace li3_queue\tests\cases\extensions\adapter\queue;
 
-use li3_queue\storage\Queue;
 use li3_queue\extensions\adapter\queue\Beanstalk;
 
 class BeanstalkTest extends \lithium\test\Unit {
 
-	protected $_testConfig = array(
-		'adapter' => 'Beanstalk',
-		'host' => '127.0.0.1',
-		'port' => 11300
-	);
+	public $beanstalk = null;
 
-	protected $_testTube = 'test_tube';
-	protected $_uniqueJob;
+	public function testInitialize() {
+		$beanstalk = new Beanstalk();
+		$this->assertInternalType('object', $beanstalk);
 
-	public function skip() {
-		$message = "Beanstalk server is not running.";
-		$this->skipIf(!$this->_hasNetwork($this->_testConfig), $message);
+		//var_dump($beanstalk);
+
+		$this->beanstalk = &$beanstalk;
 	}
 
-	protected function _hasNetwork($config = array()) {
-		$socket = @fsockopen($config['host'], $config['port']);
-		if($socket) fclose($socket);
-		return !!$socket;
+	public function testConnect() {
+		$beanstalk = &$this->beanstalk;
+
+		$result = $beanstalk->connect();
+		//var_dump($result);
 	}
 
-	public function setUp() {
-		$this->_uniqueJob = array('foo' => 'bar', 'time' => time());
-		Queue::config(array('default' => $this->_testConfig));
-		/*if(!ini_get('safe_mode')) {
-            set_time_limit(3);
-        }*/
-		//Queue::reset(array('tube' => $this->_testTube)); //@todo clean queue before tests (bug: reset is blocking, timeout not working.)
+	public function testPurgeQueue() {
+		$beanstalk = &$this->beanstalk;
+
+		for($x=0; $x<10; $x++) {
+			$beanstalk->write('message_'.$x);
+		}
+
+		$result = $beanstalk->purge();
+		$this->assertTrue($result);
 	}
 
-	public function tearDown() {
+	public function testWrite() {
+		$beanstalk = &$this->beanstalk;
+
+		$result = $beanstalk->write('message');
+		$this->assertTrue($result);
 	}
 
+	public function testReadWithRequeue() {
+		$beanstalk = &$this->beanstalk;
 
-	public function testConfig() {
-		$this->assertTrue((boolean)Queue::getConfig('default'));
+		$expected = 'message';
+
+		$message = $beanstalk->read();
+
+		$this->assertInternalType('object', $message);
+		$this->assertEqual($expected, $message->data());
+
+		$result = $message->requeue();
+		$this->assertTrue($result);
 	}
 
-	public function testAdd() {
-		$result = Queue::add($this->_uniqueJob, array('tube' => $this->_testTube));
-		$this->assertTrue(is_numeric($result));
+	public function testReadWithConfirm() {
+		$beanstalk = &$this->beanstalk;
+
+		$expected = 'message';
+
+		$message = $beanstalk->read();
+
+		$this->assertInternalType('object', $message);
+		$this->assertEqual($expected, $message->data());
+
+		$result = $message->confirm();
+		$this->assertTrue($result);
 	}
 
-	public function testRun() {
-		$result = Queue::run(array('tube' => $this->_testTube));
-		$this->assertTrue(is_array($result) && !empty($result['id']));
-		//$this->assertEqual($result, $this->_uniqueJob); //@todo
-	}
+	public function testDisconnect() {
 
-	public function testReset() {
-		//@todo
 	}
 
 }
