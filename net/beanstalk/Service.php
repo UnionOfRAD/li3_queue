@@ -300,6 +300,10 @@ class Service extends \lithium\core\Object {
 		return $this->connection->send($request);
 	}
 
+	public function disconnect() {
+		return $this->connection->close();
+	}
+
 }
 
 ?>
