@@ -64,6 +64,13 @@ class ServiceTest extends \lithium\test\Unit {
 		$this->assertEqual('OK', $result->status);
 	}
 
+	public function testStatsTube() {
+		$service = &$this->service;
+
+		$result = $service->statsTube('default');
+		$this->assertEqual('OK', $result->status);
+	}
+
 	public function testStats() {
 		$service = &$this->service;
 
