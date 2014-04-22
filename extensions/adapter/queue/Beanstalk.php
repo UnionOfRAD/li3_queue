@@ -134,8 +134,32 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
 	/* Queue Protocol */
 
+	/**
+	 * Write method.
+	 * Sends `put` command to write a message to the queue.
+	 * Defaults are the following:
+	 * - `priority`=0 Messages are processed by priority, lowest first
+	 * - `delay`=0 Number of seconds before moving the message to the ready queue
+	 * - `timeout`=30 Number of seconds a worker can process a message
+	 *
+	 * @param string $data
+	 * @param array $options
+	 * @return boolean
+	 */
 	public function write($data, array $options = array()) {
-		return $this->put($data, $options);
+		$defaults = array(
+			'priority' => 0,
+			'delay' => 0,
+			'timeout' => 30
+		);
+		$options += $defaults;
+		extract($options, EXTR_OVERWRITE);
+
+		$response = $this->connection->put($data, $priority, $delay, $timeout);
+		if($response->status == 'INSERTED') {
+			return true;
+		}
+		return false;
 	}
 
 	public function read(array $options = array()) {
