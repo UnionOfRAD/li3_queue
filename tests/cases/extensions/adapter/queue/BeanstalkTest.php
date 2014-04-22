@@ -18,8 +18,6 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$beanstalk = new Beanstalk();
 		$this->assertInternalType('object', $beanstalk);
 
-		//var_dump($beanstalk);
-
 		$this->beanstalk = &$beanstalk;
 	}
 
@@ -27,7 +25,7 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$beanstalk = &$this->beanstalk;
 
 		$result = $beanstalk->connect();
-		//var_dump($result);
+		$this->assertTrue($result);
 	}
 
 	public function testPurgeQueue() {
@@ -77,7 +75,10 @@ class BeanstalkTest extends \lithium\test\Unit {
 	}
 
 	public function testDisconnect() {
+		$beanstalk = &$this->beanstalk;
 
+		$result = $beanstalk->disconnect();
+		$this->assertTrue($result);
 	}
 
 }
