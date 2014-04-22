@@ -155,7 +155,19 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	public function purge() {
+	}
 
+	protected function _message($response, array $options = array()) {
+		$defaults = array('class' => 'message');
+		$options += $defaults;
+
+		$class = $options['class'];
+		$params = array(
+			'id' => $response->id,
+			'queue' => $this,
+			'data' => trim($response->data)
+		);
+		return $this->invokeMethod('_instance', array($class, $params));
 	}
 
 	public function add($task, array $options = array()) {
