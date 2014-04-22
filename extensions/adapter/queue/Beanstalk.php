@@ -72,20 +72,13 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 * @return boolean Returns `true` the connection attempt was successful, otherwise `false`.
 	 */
 	public function connect() {
-		$cfg = $this->_config;
-		$this->_isConnected = false;
+		if(!$this->connection) {
+			$this->connection = $this->invokeMethod('_instance', array('service', $this->_config));
 
-		$socketOptions = array('persistent' => $cfg['persistent'], 'host' => $cfg['host'], 'port' => $cfg['port'], 'timeout' => -1);
-		$this->connection = new BeanstalkSocket($socketOptions);
-
-		try {
-			if ($this->connection->open($socketOptions)) {
+			if($this->connection->connect()) {
 				$this->_isConnected = true;
 			}
-		} catch (Exception $e) {
-			throw new NetworkException("Could not connect to Beanstalk.", 503, $e);
 		}
-
 		return $this->_isConnected;
 	}
 
@@ -124,7 +117,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	public function disconnect() {
 		if ($this->isConnected()) {
 			try {
-				$this->_isConnected = !$this->connection->close();
+				$this->_isConnected = !$this->connection->disconnect();
 			} catch (Exception $e) {}
 			unset($this->connection);
 			return !$this->_isConnected;
