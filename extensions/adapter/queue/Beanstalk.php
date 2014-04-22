@@ -163,15 +163,43 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	public function read(array $options = array()) {
+		$defaults = array(
+			'timeout' => 0
+		);
+		$options += $defaults;
+		extract($options, EXTR_OVERWRITE);
 
+		$response = $this->connection->reserve($options);
+
+		if(is_object($response) && $response->status == 'RESERVED') {
+			return $this->_message($response, $options);
+		}
+		return null;
 	}
 
 	public function confirm($message, array $options = array()) {
+		$response = $this->connection->delete($message->id());
 
+		if(is_object($response) && $response->status == 'DELETED') {
+			return true;
+		}
+		return false;
 	}
 
 	public function requeue($message, array $options = array()) {
+		$defaults = array(
+			'priority' => 0,
+			'delay' => 0
+		);
+		$options += $defaults;
+		extract($options, EXTR_OVERWRITE);
 
+		$response = $this->connection->release($message->id(), $priority, $delay);
+
+		if(is_object($response) && $response->status == 'RELEASED') {
+			return true;
+		}
+		return false;
 	}
 
 	public function consume($callback, array $options = array()) {
