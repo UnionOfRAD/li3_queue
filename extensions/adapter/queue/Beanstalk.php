@@ -15,6 +15,13 @@ use li3_queue\extensions\adapter\net\socket\Beanstalk as BeanstalkSocket;
 
 class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 
+	protected $_autoConfig = array('classes' => 'merge');
+
+	protected $_classes = array(
+		'message' => 'li3_queue\storage\queue\Message',
+		'service' => '\li3_queue\net\beanstalk\Service'
+	);
+
 	/**
 	 * The `Socket` instance used to send `Service` calls.
 	 *
@@ -29,10 +36,6 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 * @var boolean
 	 */
 	protected $_isConnected = false;
-
-	protected $_classes = array(
-		'service' => '\li3_queue\net\beanstalk\Service'
-	);
 
 	/**
 	 * Adds config values to the public properties when a new object is created.
