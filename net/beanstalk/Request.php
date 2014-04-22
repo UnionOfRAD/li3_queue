@@ -29,6 +29,32 @@ class Request extends \lithium\core\Object {
 
 	protected $_requestTypes = array();
 
+	protected $_requestStrings = array(
+		'use' => 'use {:tube}',
+		'put' => "put {:pri} {:delay} {:ttr} {:bytes}\r\n{:data}",
+		'reserve' => 'reserve',
+		'reserve-with-timeout' => 'reserve-with-timeout {:timeout}',
+		'release' => 'release {:id}',
+		'delete' => 'delete {:id}',
+		'bury' => 'bury {:id}',
+		'touch' => 'touch {:id}',
+		'watch' => 'watch {:tube}',
+		'ignore' => 'ignore {:tube}',
+		'peek' => 'peek {:id}',
+		'peek-ready' => 'peek-ready',
+		'peek-delayed' => 'peek-delayed',
+		'peek-buried' => 'peek-buried',
+		'kick' => 'kick {:bound}',
+		'kick-job' => 'kick-job {:id}',
+		'stats-job' => 'stats-job {:id}',
+		'stats-tube' => 'stats-tube {:tube}',
+		'stats' => 'stats',
+		'list-tubes' => 'list-tubes',
+		'list-tube-used' => 'list-tube-used',
+		'list-tubes-watched' => 'list-tubes-watched',
+		'pause-tube' => 'pause-tube {:tube} {:delay}'
+	);
+
 	public function __construct(array $config = array()) {
 		$defaults = array(
 			'method' => null,
