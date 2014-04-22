@@ -78,7 +78,7 @@ class Service extends \lithium\core\Object {
 
 	/**
 	 * Put method.
-	 * Sends `put` command to set the tube.
+	 * Sends `put` command to write a message to the tube.
 	 *
 	 * @param string $data
 	 * @param string $pri
