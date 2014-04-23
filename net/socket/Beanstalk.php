@@ -2,7 +2,7 @@
 
 namespace li3_queue\net\socket;
 
-class Stream extends \lithium\net\socket\Stream {
+class Beanstalk extends \lithium\net\socket\Stream {
 
 	public function open(array $options = array()) {
 		$resource = parent::open($options);

@@ -39,7 +39,7 @@ class Service extends \lithium\core\Object {
 			'port' => 11300,
 			'timeout' => 30,
 			'autoConnect' => true,
-			'socket' => 'Stream'
+			'socket' => 'Beanstalk'
 		);
 		parent::__construct($config + $defaults);
 	}
