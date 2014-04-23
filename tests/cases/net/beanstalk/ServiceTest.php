@@ -26,7 +26,13 @@ class ServiceTest extends \lithium\test\Unit {
 	public function testReserveTimedOut() {
 		$service = &$this->service;
 
-		$result = $service->reserve(0);
+		do {
+			$result = $service->reserve(0);
+			if($result->id) {
+				$service->delete($result->id);
+			}
+		} while ($result->status == 'RESERVED');
+
 		$this->assertEqual('TIMED_OUT', $result->status);
 	}
 
