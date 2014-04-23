@@ -97,17 +97,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 *         resource during the course of the request.
 	 */
 	public function isConnected(array $options = array()) {
-		$defaults = array('autoConnect' => false);
-		$options += $defaults;
-
-		if (!$this->_isConnected && $options['autoConnect']) {
-			try {
-				$this->connect();
-			} catch (NetworkException $e) {
-				$this->_isConnected = false;
-			}
-		}
-		return $this->_isConnected;
+ 		return $this->_isConnected;
 	}
 
 	/**
