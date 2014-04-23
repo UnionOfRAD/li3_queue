@@ -182,7 +182,17 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	}
 
 	public function consume($callback, array $options = array()) {
+		while($response = $this->connection->reserve()) {
+			if($response->id){
+				$message = $this->_message($response);
 
+				if($result = $callback($message)) {
+					$message->confirm();
+				} else {
+					$message->requeue();
+				}
+			}
+		}
 	}
 
 	public function purge() {
