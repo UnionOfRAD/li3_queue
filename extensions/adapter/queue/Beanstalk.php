@@ -106,14 +106,9 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 * @return boolean True on successful disconnect, false otherwise.
 	 */
 	public function disconnect() {
-		if ($this->isConnected()) {
-			try {
-				$this->_isConnected = !$this->connection->disconnect();
-			} catch (Exception $e) {}
-			unset($this->connection);
-			return !$this->_isConnected;
+		if($this->isConnected()) {
+			return $this->connection->disconnect();
 		}
-		return true;
 	}
 
 	/* Queue Protocol */
