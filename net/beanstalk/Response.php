@@ -25,17 +25,17 @@ class Response extends \lithium\core\Object {
 		'/(?<status>USING)\s(?<tube>.+)/',
 		'/(?<status>DEADLINE_SOON)/',
 		'/(?<status>TIMED_OUT)/',
-		'/(?<status>RESERVED)\s(?<id>\d+)\s(?<bytes>\d+)\r\n(?<data>.*)/',
+		'/(?<status>RESERVED)\s(?<id>\d+)\s(?<bytes>\d+)/',
 		'/(?<status>DELETED)/',
 		'/(?<status>NOT_FOUND)/',
 		'/(?<status>RELEASED)/',
 		'/(?<status>TOUCHED)/',
 		'/(?<status>WATCHING)\s(?<count>\d+)/',
 		'/(?<status>NOT_IGNORED)/',
-		'/(?<status>FOUND)\s(?<id>\d+)\s(?<bytes>\d+)\r\n(?<data>.*)/s',
+		'/(?<status>FOUND)\s(?<id>\d+)\s(?<bytes>\d+)/s',
 		'/(?<status>KICKED)\s(?<count>\d+)/',
 		'/(?<status>KICKED)/',
-		'/(?<status>OK)\s(?<bytes>\d+)\r\n(?<data>.*)/s',
+		'/(?<status>OK)\s(?<bytes>\d+)/s',
 		'/(?<status>PAUSED)/'
 	);
 
@@ -43,7 +43,7 @@ class Response extends \lithium\core\Object {
 		parent::__construct($config);
 
 		if($this->_config['message']) {
-			$this->data = $this->_parseResponse($this->_config['message']);
+			$this->_parseResponse($this->_config['message']);
 		}
 	}
 
@@ -51,26 +51,13 @@ class Response extends \lithium\core\Object {
 		foreach ($this->_responseTypes as $pattern) {
 			if(preg_match($pattern, $message, $match)) {
 				$this->id = (isset($match['id'])) ? $match['id'] : null ;
-				$this->status = (isset($match['status'])) ? $match['status'] : null ;
-				$this->tube = (isset($match['tube'])) ? $match['tube'] : null ;
-				$this->bytes = (isset($match['bytes'])) ? $match['bytes'] : null ;
-				$this->count = (isset($match['count'])) ? $match['count'] : null ;
-
-				if($this->status == "OK" && $this->bytes > 0) {
-					$match['data'] = $this->_parseYaml($match['data']);
-				}
-
-				return (isset($match['data'])) ? $match['data'] : null ;
+				$this->status = (isset($match['status'])) ? (string) $match['status'] : null ;
+				$this->tube = (isset($match['tube'])) ? (string) $match['tube'] : null ;
+				$this->bytes = (isset($match['bytes'])) ? (integer) $match['bytes'] : null ;
+				$this->count = (isset($match['count'])) ? (integer) $match['count'] : null ;
 			}
 		}
 		return null;
-	}
-
-	protected function _parseYaml($data) {
-		if(extension_loaded('yaml')) {
-			return yaml_parse($data);
-		}
-		return $data;
 	}
 
 }
