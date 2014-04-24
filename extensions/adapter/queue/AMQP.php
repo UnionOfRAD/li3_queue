@@ -215,9 +215,12 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 * @return .
 	 */
 	protected function &_channel() {
+		$config = &$this->_config;
+
 		if($this->connection) {
 			if(!$this->channel) {
 				$this->channel = new AMQPChannel($this->connection);
+				$this->channel->setPrefetchCount($config['prefetchCount']);
 			}
 			return $this->channel;
 		}
