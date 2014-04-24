@@ -9,10 +9,31 @@
 namespace li3_queue\tests\cases\extensions\adapter\queue;
 
 use li3_queue\extensions\adapter\queue\Beanstalk;
+use lithium\core\NetworkException;
 
 class BeanstalkTest extends \lithium\test\Unit {
 
 	public $beanstalk = null;
+
+	protected $_testConfig = array(
+		'host' => '127.0.0.1',
+		'port' => 11300,
+		'autoConnect' => true
+	);
+
+	public function skip() {
+		$config = $this->_testConfig;
+
+		try {
+			$conn = new Beanstalk($config);
+		} catch (NetworkException $e) {
+			$message  = "A Beanstalk server does not appear to be running on ";
+			$message .= $config['host'] . ':' . $config['port'];
+			$hasBeanstalk = ($e->getCode() != 503) ? true : false;
+			$this->skipIf(!$hasBeanstalk, $message);
+		}
+		unset($conn);
+	}
 
 	public function testInitialize() {
 		$beanstalk = new Beanstalk();

@@ -3,10 +3,32 @@
 namespace li3_queue\tests\cases\net\beanstalk;
 
 use li3_queue\net\beanstalk\Service;
+use lithium\core\NetworkException;
 
 class ServiceTest extends \lithium\test\Unit {
 
 	public $service = null;
+
+	protected $_testConfig = array(
+		'host' => '127.0.0.1',
+		'port' => 11300
+	);
+
+	public function skip() {
+		$config = $this->_testConfig;
+
+		$conn = new Service($config);
+
+		try {
+			$conn->connect();
+		} catch (NetworkException $e) {
+			$message  = "A Beanstalk server does not appear to be running on ";
+			$message .= $config['host'] . ':' . $config['port'];
+			$hasBeanstalk = ($e->getCode() != 503) ? true : false;
+			$this->skipIf(!$hasBeanstalk, $message);
+		}
+		unset($conn);
+	}
 
 	public function testConnection() {
 		$service = new Service();
