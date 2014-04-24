@@ -4,6 +4,7 @@ namespace li3_queue\net\beanstalk;
 
 use lithium\core\Libraries;
 use lithium\core\ClassNotFoundException;
+use lithium\core\NetworkException;
 
 class Service extends \lithium\core\Object {
 
@@ -58,8 +59,12 @@ class Service extends \lithium\core\Object {
 		$config = $this->_config;
 
 		if(!$this->_isConnected) {
-			if($this->connection->open($config)) {
-				$this->_isConnected = true;
+			try {
+				if($this->connection->open($config)) {
+					$this->_isConnected = true;
+				}
+			} catch (NetworkException $e) {
+				throw new NetworkException("Unable to connect to Beanstalk");
 			}
 		}
 		return $this->_isConnected;
