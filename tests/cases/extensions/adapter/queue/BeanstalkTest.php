@@ -8,61 +8,112 @@
 
 namespace li3_queue\tests\cases\extensions\adapter\queue;
 
-use li3_queue\storage\Queue;
 use li3_queue\extensions\adapter\queue\Beanstalk;
+use lithium\core\NetworkException;
 
 class BeanstalkTest extends \lithium\test\Unit {
 
+	public $beanstalk = null;
+
 	protected $_testConfig = array(
-		'adapter' => 'Beanstalk',
 		'host' => '127.0.0.1',
-		'port' => 11300
+		'port' => 11300,
+		'autoConnect' => true
 	);
 
-	protected $_testTube = 'test_tube';
-	protected $_uniqueJob;
-
 	public function skip() {
-		$message = "Beanstalk server is not running.";
-		$this->skipIf(!$this->_hasNetwork($this->_testConfig), $message);
+		$config = $this->_testConfig;
+
+		try {
+			$conn = new Beanstalk($config);
+		} catch (NetworkException $e) {
+			$message  = "A Beanstalk server does not appear to be running on ";
+			$message .= $config['host'] . ':' . $config['port'];
+			$hasBeanstalk = ($e->getCode() != 503) ? true : false;
+			$this->skipIf(!$hasBeanstalk, $message);
+		}
+		unset($conn);
 	}
 
-	protected function _hasNetwork($config = array()) {
-		$socket = fsockopen($config['host'], $config['port']);
-		if($socket) fclose($socket);
-		return !!$socket;
+	public function testInitialize() {
+		$beanstalk = new Beanstalk();
+		$this->assertInternalType('object', $beanstalk);
+
+		$this->beanstalk = &$beanstalk;
 	}
 
-	public function setUp() {
-		$this->_uniqueJob = array('foo' => 'bar', 'time' => time());
-		Queue::config(array('default' => $this->_testConfig));
-		/*if(!ini_get('safe_mode')) {
-            set_time_limit(3);
-        }*/
-		//Queue::reset(array('tube' => $this->_testTube)); //@todo clean queue before tests (bug: reset is blocking, timeout not working.)
+	public function testConnect() {
+		$beanstalk = &$this->beanstalk;
+
+		$result = $beanstalk->connect();
+		$this->assertTrue($result);
 	}
 
-	public function tearDown() {
+	public function testPurgeQueue() {
+		$beanstalk = &$this->beanstalk;
+
+		for($x=0; $x<10; $x++) {
+			$beanstalk->write('message_'.$x);
+		}
+
+		$result = $beanstalk->purge();
+		$this->assertTrue($result);
 	}
 
+	public function testWrite() {
+		$beanstalk = &$this->beanstalk;
 
-	public function testConfig() {
-		$this->assertTrue((boolean)Queue::getConfig('default'));
+		$result = $beanstalk->write('message');
+		$this->assertTrue($result);
 	}
 
-	public function testAdd() {
-		$result = Queue::add($this->_uniqueJob, array('tube' => $this->_testTube));
-		$this->assertTrue(is_numeric($result));
+	public function testReadWithRequeue() {
+		$beanstalk = &$this->beanstalk;
+
+		$expected = 'message';
+
+		$message = $beanstalk->read();
+
+		$this->assertInternalType('object', $message);
+		$this->assertEqual($expected, $message->data());
+
+		$result = $message->requeue();
+		$this->assertTrue($result);
 	}
 
-	public function testRun() {
-		$result = Queue::run(array('tube' => $this->_testTube));
-		$this->assertTrue(is_array($result) && !empty($result['id']));
-		//$this->assertEqual($result, $this->_uniqueJob); //@todo
+	public function testReadWithConfirm() {
+		$beanstalk = &$this->beanstalk;
+
+		$expected = 'message';
+
+		$message = $beanstalk->read();
+
+		$this->assertInternalType('object', $message);
+		$this->assertEqual($expected, $message->data());
+
+		$result = $message->confirm();
+		$this->assertTrue($result);
 	}
 
-	public function testReset() {
-		//@todo
+	public function testConsume() {
+		$beanstalk = &$this->beanstalk;
+
+		$beanstalk->write('kill_consume');
+
+		$result = $beanstalk->consume(function($msg) {
+			$msg->confirm();
+			if($msg->data() == 'kill_consume') {
+				return false;
+			}
+		});
+		$this->assertFalse($result);
+	}
+
+	public function testDisconnect() {
+		$beanstalk = &$this->beanstalk;
+
+		$result = $beanstalk->disconnect();
+		$this->assertTrue($result);
 	}
 
 }

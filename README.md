@@ -6,74 +6,141 @@ by `Christopher Garvis` & `Olivier Louvignes`
 
 This plugin provides a simple way to handle work queues, it currently supports:
 
-* [Beanstalk](http://kr.github.com/beanstalkd/).
-* [Gearman](http://gearman.org/) in the gearman branch.
+* [AMQP](http://pecl.php.net/package/amqp/)
+* [Beanstalk](http://kr.github.com/beanstalkd/)
+* [Gearman](http://gearman.org/) in the gearman branch
 
 ### Installation
 
 1. To enable the library add the following line at the end of `app/config/bootstrap/libraries.php`:
 
-        Libraries::add('li3_queue');
+    ```php
+    Libraries::add('li3_queue');
+    ```
 
 2. Then configure your queues in `app/config/bootstrap/queues.php`:
 
-        use li3_queue\storage\Queue;
+    ```php
+    use li3_queue\storage\Queue;
 
-        Queue::config(array('default' => array(
-            'adapter' => 'Beanstalk',
-            'host' => '127.0.0.1',
-            'port' => 11300
-        )));
+    Queue::config(array('default' => array(
+        'adapter' => 'Beanstalk',
+        'host' => '127.0.0.1',
+        'port' => 11300
+    )));
+    ```
 
 3. Update `app/config/bootstrap.php` to include this new configuration file:
 
-        /**
-         * Include this file if your application uses one or more queues.
-         */
-        require __DIR__ . '/bootstrap/queues.php';
+    ```php
+    /**
+     * Include this file if your application uses one or more queues.
+     */
+    require __DIR__ . '/bootstrap/queues.php';
+    ```
 
 4. You can now use your configured queues in your application:
 
-        use li3_queue\Queue;
+    ```php
+    use li3_queue\storage\Queue;
+    ```
 
 5. There is some [known bugs](https://bugs.php.net/60817) with several PHP versions regarding the `stream_get_line` function that can incorrectly fail to return on `\r\n EOL` packets. Unfortunately this bug affects the 12.04 shipped PHP version (php5.3.10-1).
 
+#### Settings
 
-#### Beanstalk interface
+1. If `autoConfirm` is true messages will be automatically confirmed on the server and whenever you use `Queue::read()` or `Queue::consume()`. This means you will not need to use `$message->confirm()` and will be unable to requeue using `$message->requeue()`.
 
-1. Add a job
+### AMQP interface
 
-        $task = array(
-            'foo' => 'bar'
-        );
-        $options = array(
-            'tube' => 'preview',
-            'priority' => 9,
-            'delay' => 30
-        );
+#### Configuration
 
-        $jobId = Queue::add($task, $options);
+Configuration for your queue will go in `app/config/bootstrap/queues.php` and can contain any of the following options:
 
-2. Retreive & run a job
+```php
+Queue::config(array(
+    'default' => array(
+        'adapter' => 'AMQP',
+        'host' => '127.0.0.1',
+        'login' => 'guest',
+        'password' => 'guest',
+        'port' => 5672,
+        'vhost' => '/',
+        'exchange' => 'li3.default',
+        'queue' => 'li3.default',
+        'routingKey' => null,
+        'autoConfirm' => false
+    )
+));
+```
 
-        $options = array(
-            'tube' => 'preview',
-            'timeout' => 60
-        );
-        $job = Queue::run($options);
+Additional notes:
 
-2. Delete a job
+1. `routingKey` when `null` will be set by default to the same value as `queue`, setting the routing key will only be needed in advanced configurations
 
-        $queue = Queue::adapter('default');
-        $success = $queue->delete($jobId);
+### Beanstalk interface
 
-3. Get stats
+#### Configuration
 
-        $queue = Queue::adapter('default');
-        $stats = $queue->statistics();
+Configuration for your queue will go in `app/config/bootstrap/queues.php` and can contain any of the following options:
+
+```php
+Queue::config(array(
+    'default' => array(
+        'adapter' => 'Beanstalk',
+        'host' => '127.0.0.1',
+        'port' => 11300,
+        'tube' => 'default',
+        'autoConfirm' => false
+    )
+));
+```
 
 * Check [source](https://github.com/UnionOfRAD/li3_queue/blob/master/extensions/adapter/queue/Beanstalk.php) for additional configuration.
 
+### Usage
+
+1. Write a message
+
+    ```php
+    Queue::write('default', 'message');
+    ```
+
+2. Read a message
+
+    ```php
+    $message = Queue::read('default');
+    ```
+
+3. Confirm or requeue a message
+
+    Once you've read a message from the queue you will either need to confirm it's success using:
+
+    ```php
+    $message->confirm();
+    ```
+
+    Or requeue your message using:
+
+    ```php
+    $message->requeue();
+    ```
+
+4. Consume messages
+
+    ```php
+    Queue::consume('default', function($message) {
+        // Do something with message
+        if($success) {
+            // Confirm message
+            $message->confirm();
+        }
+        // Requeue message
+        $message->requeue();
+    });
+    ```
+
+    Consuming messages is a blocking action which will retrieve the next available message and pass it off to the callback. Returning false in the callback will break out of the consume.
 
 ### Bugs & Contribution
 

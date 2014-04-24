@@ -15,9 +15,67 @@ class Queue extends \lithium\core\Adaptable {
 
 	/**
 	 * Re-define configurations to avoid overwrite configurations of other adapters
-	 * @var array the configurations 
+	 * @var array the configurations
 	 */
 	protected static $_configurations = array();
+
+	/**
+	 * Reads from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for reading
+	 * @param mixed $data Data to be queued
+	 * @param mixed $options Options for the method
+	 * @return boolean True on successful cache write, false otherwise
+	 */
+	public static function write($name, $data, array $options = array()) {
+		$method = static::adapter($name)->write($data, $options);
+		return $method;
+	}
+
+	/**
+	 * Reads from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for reading
+	 * @param mixed $options Options for the method
+	 * @return mixed Read results on successful queue read, null otherwise
+	 */
+	public static function read($name, array $options = array()) {
+		$method = static::adapter($name)->read($options);
+		return $method;
+	}
+
+	/**
+	 * Consume from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return non returning
+	 */
+	public static function consume($name, $callback, array $options = array()) {
+		$method = static::adapter($name)->consume($callback, $options);
+		return $method;
+	}
+
+	/**
+	 * Purge from the specified queue configuration
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return non returning
+	 */
+	public static function purge($name) {
+		$method = static::adapter($name)->purge();
+		return $method;
+	}
+
+	/**
+	 * Reads stats from the specified queue configuration.
+	 *
+	 * @param string $name Configuration to be used for consuming
+	 * @return non returning
+	 */
+	public static function stats($name) {
+		$method = static::adapter($name)->stats();
+		return $method;
+	}
 
 	/**
 	 * @param string $task task name to queue
