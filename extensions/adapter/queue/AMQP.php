@@ -45,17 +45,17 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'host'` _string_: '127.0.0.1'
 	 *        - `'login'` _string_: 'guest'
 	 *        - `'password'` _string_: 'guest'
-	 *        - `'port'` _interger_: 5672
+	 *        - `'port'` _integer_: 5672
 	 *        - `'vhost'` _string_: '/'
 	 *        - `'exchange'` _string_: 'li3.default'
 	 *        - `'queue'` _string_: 'li3.default'
 	 *        - `'routingKey'` _mixed_: null
 	 *        - `'durable'` _boolean_: false
-	 *        - `'minMessages'` _interger_: 0
-	 *        - `'maxMessages'` _interger_: 1
-	 *        - `'prefetchCount'` _interger_: 3
+	 *        - `'minMessages'` _integer_: 0
+	 *        - `'maxMessages'` _integer_: 1
+	 *        - `'prefetchCount'` _integer_: 3
 	 *        - `'autoConfirm'` _boolean_: false
-	 *        - `'autoConnect'` _interger_: 1
+	 *        - `'autoConnect'` _integer_: 1
 	 */
 	public function __construct(array $config = array()) {
 		$defaults = array(
