@@ -47,6 +47,10 @@ This plugin provides a simple way to handle work queues, it currently supports:
 
 5. There is some [known bugs](https://bugs.php.net/60817) with several PHP versions regarding the `stream_get_line` function that can incorrectly fail to return on `\r\n EOL` packets. Unfortunately this bug affects the 12.04 shipped PHP version (php5.3.10-1).
 
+#### Settings
+
+1. If `autoConfirm` is true messages will be automatically confirmed on the server and whenever you use `Queue::read()` or `Queue::consume()`. This means you will not need to use `$message->confirm()` and will be unable to requeue using `$message->requeue()`.
+
 ### AMQP interface
 
 #### Configuration
@@ -65,7 +69,7 @@ Queue::config(array(
         'exchange' => 'li3.default',
         'queue' => 'li3.default',
         'routingKey' => null,
-        'autoAck' => false
+        'autoConfirm' => false
     )
 ));
 ```
@@ -73,8 +77,6 @@ Queue::config(array(
 Additional notes:
 
 1. `routingKey` when `null` will be set by default to the same value as `queue`, setting the routing key will only be needed in advanced configurations
-
-2. `autoAck` is a global way to enable `AUTO_ACK` when reading messages. If this is true messages will be automatically acknowledged on the server and whenever you use `Queue::read()` you will not need to follow it with `Queue::confirm()`.
 
 ### Beanstalk interface
 
@@ -89,7 +91,7 @@ Queue::config(array(
         'host' => '127.0.0.1',
         'port' => 11300,
         'tube' => 'default',
-        'autoAck' => false
+        'autoConfirm' => false
     )
 ));
 ```
