@@ -50,10 +50,10 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'exchange'` _string_: 'li3.default'
 	 *        - `'queue'` _string_: 'li3.default'
 	 *        - `'routingKey'` _mixed_: null
-	 *        - `'autoAck'` _mixed_: 0
 	 *        - `'minMessages'` _interger_: 0
 	 *        - `'maxMessages'` _interger_: 1
 	 *        - `'prefetchCount'` _interger_: 3
+	 *        - `'autoConfirm'` _boolean_: false
 	 *        - `'autoConnect'` _interger_: 1
 	 */
 	public function __construct(array $config = array()) {
@@ -66,10 +66,10 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'exchange' => 'li3.default',
 			'queue' => 'li3.default',
 			'routingKey' => null,
-			'autoAck' => false,
 			'minMessages' => 0,
 			'maxMessages' => 1,
 			'prefetchCount' => 3,
+			'autoConfirm' => false,
 			'autoConnect' => 1
 		);
 		parent::__construct($config + $defaults);
@@ -292,7 +292,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$queue = $this->_queue();
 
 		$defaults = array(
-			'flag' => ($config['autoAck']) ? AMQP_AUTOACK : 0
+			'flag' => ($config['autoConfirm']) ? AMQP_AUTOACK : 0
 		);
 		$options = $options + $defaults;
 
