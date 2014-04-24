@@ -47,6 +47,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'tube'` _string_: 'default'
 	 *        - `'kickBound'` _interger_: 100
 	 *        - `'persistent'` _boolean_: true
+	 *        - `'autoConfirm'` _boolean_: false
 	 *        - `'autoConnect'` _boolean_: true
 	 */
 	public function __construct(array $config = array()) {
@@ -57,6 +58,7 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 			'tube' => 'default',
 			'kickBound' => 100,
 			'persistent' => true,
+			'autoConfirm' => false,
 			'autoConnect' => true
 		);
 		parent::__construct($config + $defaults);
@@ -218,7 +220,13 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 			'queue' => $this,
 			'data' => trim($response->data)
 		);
-		return $this->invokeMethod('_instance', array($class, $params));
+
+		$message = $this->invokeMethod('_instance', array($class, $params));
+
+		if($this->_config['autoConfirm']) {
+				$message->confirm();
+		}
+		return $message;
 	}
 
 }
