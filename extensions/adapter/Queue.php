@@ -104,6 +104,13 @@ abstract class Queue extends \lithium\core\Object {
 	 */
 	abstract public function consume($callback, array $options = array());
 
+	/**
+	 * Method to purge messages from the queue.
+	 *
+	 * @return boolean.
+	 */
+	abstract public function purge();
+
 }
 
 ?>
