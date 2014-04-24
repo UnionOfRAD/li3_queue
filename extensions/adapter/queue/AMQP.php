@@ -185,8 +185,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$queue = $this->_queue();
 
 		$defaults = array(
-			'flag' => AMQP_NOPARAM,
-			'return' => false
+			'flag' => AMQP_NOPARAM
 		);
 		$options += $defaults;
 
