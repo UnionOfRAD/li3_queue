@@ -81,8 +81,11 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 * @return .
 	 */
 	public function connect() {
+		$config = &$this->_config;
+
 		if(!$this->connection) {
 			$this->connection = new AMQPConnection($this->_config);
+			$this->connection->setVhost($config['vhost']);
 
 			if($this->connection->connect()) {
 				$this->_isConnected = true;
