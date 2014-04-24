@@ -72,12 +72,16 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 	 * @return boolean Returns `true` the connection attempt was successful, otherwise `false`.
 	 */
 	public function connect() {
+		$config = &$this->_config;
+
 		if(!$this->connection) {
 			$this->connection = $this->invokeMethod('_instance', array('service', $this->_config));
 
 			if($this->connection->connect()) {
 				$this->_isConnected = true;
-				$this->_setTube();
+
+				$this->connection->choose($config['tube']);
+				$this->connection->watch($config['tube']);
 			}
 		}
 		return $this->_isConnected;
@@ -215,10 +219,6 @@ class Beanstalk extends \li3_queue\extensions\adapter\Queue {
 			'data' => trim($response->data)
 		);
 		return $this->invokeMethod('_instance', array($class, $params));
-	}
-
-	protected function _setTube() {
-		return $this->connection->choose($this->_config['tube']);
 	}
 
 }
