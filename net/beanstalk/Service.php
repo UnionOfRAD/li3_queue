@@ -37,7 +37,7 @@ class Service extends \lithium\core\Object {
 			'scheme' => 'tcp',
 			'host' => 'localhost',
 			'port' => 11300,
-			'timeout' => 30,
+			'timeout' => 0,
 			'autoConnect' => true,
 			'socket' => 'Beanstalk'
 		);
