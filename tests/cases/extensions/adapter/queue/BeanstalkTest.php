@@ -74,6 +74,20 @@ class BeanstalkTest extends \lithium\test\Unit {
 		$this->assertTrue($result);
 	}
 
+	public function testConsume() {
+		$beanstalk = &$this->beanstalk;
+
+		$beanstalk->write('kill_consume');
+
+		$result = $beanstalk->consume(function($msg) {
+			$msg->confirm();
+			if($msg->data() == 'kill_consume') {
+				return false;
+			}
+		});
+		$this->assertFalse($result);
+	}
+
 	public function testDisconnect() {
 		$beanstalk = &$this->beanstalk;
 
