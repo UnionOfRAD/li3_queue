@@ -50,6 +50,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'exchange'` _string_: 'li3.default'
 	 *        - `'queue'` _string_: 'li3.default'
 	 *        - `'routingKey'` _mixed_: null
+	 *        - `'durable'` _boolean_: false
 	 *        - `'minMessages'` _interger_: 0
 	 *        - `'maxMessages'` _interger_: 1
 	 *        - `'prefetchCount'` _interger_: 3
@@ -66,6 +67,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'exchange' => 'li3.default',
 			'queue' => 'li3.default',
 			'routingKey' => null,
+			'durable' => false,
 			'minMessages' => 0,
 			'maxMessages' => 1,
 			'prefetchCount' => 3,
@@ -311,6 +313,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 */
 	protected function _publish($message, array $options = array()) {
 		$config = $this->_config;
+		$delivery_mode = ($config['durable']) ? 2 : 1 ;
+
 		$defaults = array(
 			'flags' => AMQP_NOPARAM,
 			'attributes' => array(
@@ -319,7 +323,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				'message_id' => null,
 				'user_id' => null,
 				'app_id' => null,
-				'delivery_mode' => 2,
+				'delivery_mode' => $delivery_mode,
 				'priority' => $message->priority(),
 				'timestamp' => null,
 				'expiration' => null,
