@@ -190,13 +190,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		return $queue->consume(function($envelope, $queue) use ($callback, &$options) {
 			$message = $this->_message($envelope);
 
-			if($result = $callback($message)) {
-				$message->confirm();
-			} else {
-				$message->requeue();
-			}
-
-			if($options['return']) {
+			if($callback($message) === false) {
 				return false;
 			}
 		}, $options['flag']);

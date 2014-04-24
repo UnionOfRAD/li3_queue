@@ -122,15 +122,15 @@ class AMQPTest extends \lithium\test\Unit {
 	public function testConsume() {
 		$amqp = &$this->amqp;
 
-		$amqp->write('message');
+		$amqp->write('kill_consume');
 
-		$result = $amqp->consume(function($m) {
-			return false;
-		}, array('return' => true));
-
-		$result = $amqp->consume(function($m) {
-			return true;
-		}, array('return' => true));
+		$result = $amqp->consume(function($msg) {
+			$msg->confirm();
+			if($msg->data() == 'kill_consume') {
+				return false;
+			}
+		});
+		$this->assertFalse($result);
 	}
 
 	public function testDisconnect() {

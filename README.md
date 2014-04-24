@@ -76,7 +76,27 @@ Additional notes:
 
 2. `autoAck` is a global way to enable `AUTO_ACK` when reading messages. If this is true messages will be automatically acknowledged on the server and whenever you use `Queue::read()` you will not need to follow it with `Queue::confirm()`.
 
-#### Usage
+### Beanstalk interface
+
+#### Configuration
+
+Configuration for your queue will go in `app/config/bootstrap/queues.php` and can contain any of the following options:
+
+```php
+Queue::config(array(
+    'default' => array(
+        'adapter' => 'Beanstalk',
+        'host' => '127.0.0.1',
+        'port' => 11300,
+        'tube' => 'default',
+        'autoAck' => false
+    )
+));
+```
+
+* Check [source](https://github.com/UnionOfRAD/li3_queue/blob/master/extensions/adapter/queue/Beanstalk.php) for additional configuration.
+
+### Usage
 
 1. Write a message
 
@@ -110,61 +130,15 @@ Additional notes:
     Queue::consume('default', function($message) {
         // Do something with message
         if($success) {
-            // Return true to acknowledge success
-            return true;
+            // Confirm message
+            $message->confirm();
         }
-        // Return false to requeue message
-        return false;
+        // Requeue message
+        $message->requeue();
     });
     ```
 
-    Consuming messages is a blocking action which will retrieve the next available message and pass it off to the callback. Once you have dealt with the message you can acknowledge it with `return true` or requeue it with `return false`.
-
-### Beanstalk interface
-
-#### Usage
-
-1. Add a job
-
-    ```php
-    $task = array(
-        'foo' => 'bar'
-    );
-    $options = array(
-        'tube' => 'preview',
-        'priority' => 9,
-        'delay' => 30
-    );
-
-    $jobId = Queue::add($task, $options);
-    ```
-
-2. Retreive & run a job
-
-    ```php
-    $options = array(
-        'tube' => 'preview',
-        'timeout' => 60
-    );
-    $job = Queue::run($options);
-    ```
-
-2. Delete a job
-
-    ```php
-    $queue = Queue::adapter('default');
-    $success = $queue->delete($jobId);
-    ```
-
-3. Get stats
-
-    ```php
-    $queue = Queue::adapter('default');
-    $stats = $queue->statistics();
-    ```
-
-* Check [source](https://github.com/UnionOfRAD/li3_queue/blob/master/extensions/adapter/queue/Beanstalk.php) for additional configuration.
-
+    Consuming messages is a blocking action which will retrieve the next available message and pass it off to the callback. Returning false in the callback will break out of the consume.
 
 ### Bugs & Contribution
 
