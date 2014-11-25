@@ -72,7 +72,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'maxMessages' => 1,
 			'prefetchCount' => 3,
 			'autoConfirm' => false,
-			'autoConnect' => 1
+			'autoConnect' => 1,
+			'read_timeout' => 0
 		);
 		parent::__construct($config + $defaults);
 	}
