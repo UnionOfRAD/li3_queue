@@ -56,6 +56,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'prefetchCount'` _integer_: 3
 	 *        - `'autoConfirm'` _boolean_: false
 	 *        - `'autoConnect'` _integer_: 1
+	 *        - `'readTimeout'` _integer_: 0
+	 *        - `'writeTimeout'` _integer_: 0
 	 */
 	public function __construct(array $config = array()) {
 		$defaults = array(
@@ -73,7 +75,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'prefetchCount' => 3,
 			'autoConfirm' => false,
 			'autoConnect' => 1,
-			'read_timeout' => 0
+			'readTimeout' => 0,
+			'writeTimeout' => 0
 		);
 		parent::__construct($config + $defaults);
 	}
@@ -89,6 +92,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		if(!$this->connection) {
 			$this->connection = new AMQPConnection($this->_config);
 			$this->connection->setVhost($config['vhost']);
+			$this->connection->setReadTimeout($config['readTimeout']);
+			$this->connection->setWriteTimeout($config['writeTimeout']);
 
 			if($this->connection->connect()) {
 				$this->_isConnected = true;
