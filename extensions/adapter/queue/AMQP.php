@@ -48,6 +48,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'port'` _integer_: 5672
 	 *        - `'vhost'` _string_: '/'
 	 *        - `'exchange'` _string_: 'li3.default'
+	 *        - `'exchangeType'` _const_: AMQP_EX_TYPE_DIRECT
 	 *        - `'queue'` _string_: 'li3.default'
 	 *        - `'routingKey'` _mixed_: null
 	 *        - `'durable'` _boolean_: false
@@ -67,6 +68,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'port' => 5672,
 			'vhost' => '/',
 			'exchange' => 'li3.default',
+			'exchangeType' => AMQP_EX_TYPE_DIRECT,
 			'queue' => 'li3.default',
 			'routingKey' => null,
 			'durable' => false,
@@ -244,7 +246,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'type' => AMQP_EX_TYPE_DIRECT,
 			'flags' => AMQP_DURABLE
 		);
-		$options = $options + $defaults;
+		$options = $defaults + $options;
 		$channel = $this->_channel();
 
 		if($channel) {
@@ -343,7 +345,8 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 
 		$exchange = $this->_exchange(array(
 			'queue' => $config['queue'],
-			'routingKey' => $config['routingKey']
+			'routingKey' => $config['routingKey'],
+			'type' => $config['exchangeType']
 		));
 
 		return $exchange->publish($message->data(), $routing_key, $options['flags'], $options['attributes']);
