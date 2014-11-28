@@ -246,7 +246,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'type' => AMQP_EX_TYPE_DIRECT,
 			'flags' => AMQP_DURABLE
 		);
-		$options = $defaults + $options;
+		$options = $options + $defaults;
 		$channel = $this->_channel();
 
 		if($channel) {
