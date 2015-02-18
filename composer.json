@@ -2,7 +2,7 @@
 	"name": "unionofrad/li3_queue",
 	"type": "lithium-library",
 	"description": "This plugin provides a simple way to handle work queues.",
-	"keywords": ["queues", "beanstalk", "lithium", "li3", "gearman"],
+	"keywords": ["queues", "beanstalk", "lithium", "li3", "amqp", "rabbitmq", "gearman"],
 	"homepage": "https://github.com/UnionOfRAD/li3_queue",
 	"license": "MIT License",
 	"authors": [
