@@ -93,7 +93,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$config = &$this->_config;
 
 		if(!$this->connection) {
-			$this->connection = new AMQPConnection([
+			$this->connection = new AMQPConnection(array(
 				'host' => $config['host'],
 				'port' => $config['port'],
 				'vhost' => $config['vhost'],
@@ -102,7 +102,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				'read_timeout' => $config['readTimeout'],
 				'write_timeout' => $config['writeTimeout'],
 				'connect_timeout' => $config['connectTimeout']
-			]);
+			));
 
 			if($this->connection->connect()) {
 				$this->_isConnected = true;
