@@ -266,7 +266,9 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				$exchange->declareExchange();
 				$this->exchange = $exchange;
 			}
-			$this->_queue();
+			if($config['queue']) {
+				$this->_queue();
+			}
 			return $exchange;
 		}
 		return false;
@@ -351,8 +353,6 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 		$routing_key = $config['routingKey'] ?: $config['queue'];
 
 		$exchange = $this->_exchange(array(
-			'queue' => $config['queue'],
-			'routingKey' => $config['routingKey'],
 			'type' => $config['exchangeType']
 		));
 
