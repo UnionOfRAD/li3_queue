@@ -57,6 +57,8 @@ This plugin provides a simple way to handle work queues, it currently supports:
 
 Configuration for your queue will go in `app/config/bootstrap/queues.php` and can contain any of the following options:
 
+##### 1. Basic
+
 ```php
 Queue::config(array(
     'default' => array(
@@ -70,6 +72,33 @@ Queue::config(array(
         'queue' => 'li3.default',
         'routingKey' => null,
         'autoConfirm' => false
+    )
+));
+```
+
+##### 2. Publish/Subscribe
+
+To configure the AMQP adapter to function as publish/subscribe, you can create multiple queue configs in the following way:
+
+```php
+Queue::config(array(
+    'publish' => array(
+        'adapter' => 'AMQP',
+        'exchangeType' => AMQP_EX_TYPE_FANOUT,
+        'exchange' => 'li3.publish',
+        'queue' => false,
+    ),
+    'subscribe.1' => array(
+        'adapter' => 'AMQP',
+        'exchangeType' => AMQP_EX_TYPE_FANOUT,
+        'exchange' => 'li3.publish',
+        'queue' => 'li3.subscribe.1'
+    ),
+    'subscribe.2' => array(
+        'adapter' => 'AMQP',
+        'exchangeType' => AMQP_EX_TYPE_FANOUT,
+        'exchange' => 'li3.publish',
+        'queue' => 'li3.subscribe.2'
     )
 ));
 ```
