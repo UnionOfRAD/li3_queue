@@ -87,7 +87,7 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'cacert' => null,
 			'cert' => null,
 			'key' => null,
-			'verify' => true,
+			'verify' => true
 		);
 		parent::__construct($config + $defaults);
 	}
