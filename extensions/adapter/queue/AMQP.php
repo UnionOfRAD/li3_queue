@@ -59,6 +59,10 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 	 *        - `'autoConnect'` _integer_: 1
 	 *        - `'readTimeout'` _integer_: 0
 	 *        - `'writeTimeout'` _integer_: 0
+	 *        - `'cacert'` _mixed_: null
+	 *        - `'cert'` _mixed_: null
+	 *        - `'key'` _mixed_: null
+	 *        - `'verify'` _boolean_: true
 	 */
 	public function __construct(array $config = array()) {
 		$defaults = array(
@@ -79,7 +83,11 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 			'autoConnect' => 1,
 			'readTimeout' => 0,
 			'writeTimeout' => 0,
-			'connectTimeout' => 0
+			'connectTimeout' => 0,
+			'cacert' => null,
+			'cert' => null,
+			'key' => null,
+			'verify' => true,
 		);
 		parent::__construct($config + $defaults);
 	}
@@ -101,7 +109,11 @@ class AMQP extends \li3_queue\extensions\adapter\Queue {
 				'password' => $config['password'],
 				'read_timeout' => $config['readTimeout'],
 				'write_timeout' => $config['writeTimeout'],
-				'connect_timeout' => $config['connectTimeout']
+				'connect_timeout' => $config['connectTimeout'],
+				'cacert' => $config['cacert'],
+				'cert' => $config['cert'],
+				'key' => $config['key'],
+				'verify' => $config['verify']
 			));
 
 			if($this->connection->connect()) {
