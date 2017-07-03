@@ -71,7 +71,11 @@ Queue::config(array(
         'exchange' => 'li3.default',
         'queue' => 'li3.default',
         'routingKey' => null,
-        'autoConfirm' => false
+        'autoConfirm' => false,
+        'cacert' => null,
+        'cert' => null,
+        'key' => null,
+        'verify' => true
     )
 ));
 ```
